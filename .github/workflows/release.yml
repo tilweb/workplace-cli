@@ -3,13 +3,17 @@ name: Release
 on:
   push:
     tags:
-      # Workplace-Releases. Upstream-Tags (v*, upstream/v*) sind bewusst
-      # ausgeschlossen — sonst wuerden Releases bei Upstream-Sync ausgeloest.
-      - "workplace/v*"
+      # Workplace-Releases nutzen plain v*-Tags. Upstream-Mistral-Tags
+      # werden NICHT in unseren Tag-Namespace gefetched
+      # (remote.upstream.tagOpt = --no-tags). Upstream-Sync-Tags zu Referenz-
+      # Zwecken bewusst mit dem Prefix `upstream/v*` versehen — die schliessen
+      # wir hier aus.
+      - "v*"
+      - "!upstream/**"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag (z.B. workplace/v1.0.0)"
+        description: "Tag (z.B. v1.0.0)"
         required: true
 
 permissions:

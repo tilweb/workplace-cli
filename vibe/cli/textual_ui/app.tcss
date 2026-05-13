@@ -1,4 +1,4 @@
-$mistral_orange: #FF8205;
+$workplace_purple: #9B59B6;
 
 * {
     scrollbar-color: ansi_black;
@@ -127,8 +127,8 @@ TextArea > .text-area--cursor {
     }
 
     &.border-recording {
-        border: solid $mistral_orange;
-        border-title-color: $mistral_orange;
+        border: solid $workplace_purple;
+        border-title-color: $workplace_purple;
     }
 
     &.border-remote {
@@ -146,7 +146,7 @@ TextArea > .text-area--cursor {
 #recording-indicator {
     width: auto;
     background: transparent;
-    color: $mistral_orange;
+    color: $workplace_purple;
     text-style: bold;
     padding: 0 1 0 0;
 }
@@ -239,8 +239,8 @@ Markdown {
     height: auto;
     text-style: bold;
     padding-left: 1;
-    border-left: heavy $mistral_orange;
-    color: $mistral_orange;
+    border-left: heavy $workplace_purple;
+    color: $workplace_purple;
 }
 
 .assistant-message {
@@ -1006,7 +1006,7 @@ NarratorStatus {
 }
 
 #banner-brand {
-    color: $mistral_orange;
+    color: $workplace_purple;
     text-style: bold;
     width: auto;
 }
@@ -1045,7 +1045,7 @@ NarratorStatus {
 }
 
 .whats-new-message {
-    border-left: heavy $mistral_orange;
+    border-left: heavy $workplace_purple;
     margin-bottom: 1;
 
     Markdown {
@@ -1074,7 +1074,7 @@ NarratorStatus {
     link-style: none;
     link-background-hover: transparent;
     link-style-hover: underline;
-    link-color-hover: $mistral_orange;
+    link-color-hover: $workplace_purple;
 }
 
 .whats-new-message.after-history {

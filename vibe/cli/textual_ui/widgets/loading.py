@@ -31,46 +31,29 @@ def _format_elapsed(seconds: int) -> str:
 
 
 class LoadingWidget(SpinnerMixin, Static):
-    TARGET_COLORS = (
-        MistralColors.YELLOW,
-        MistralColors.ORANGE_LIGHT,
-        MistralColors.ORANGE,
-        MistralColors.ORANGE_DARK,
-        MistralColors.RED,
-    )
+    # === ADACOR PATCH: Workplace-Branding (Purple statt Mistral-Orange) ===
+    TARGET_COLORS = ("#C39BD3", "#AF7AC5", "#9B59B6", "#7D3C98", "#6C3483")
     SPINNER_TYPE = SpinnerType.SNAKE
 
     EASTER_EGGS: ClassVar[list[str]] = [
-        "Eating a chocolatine",
-        "Eating a pain au chocolat",
-        "Réflexion",
-        "Analyse",
-        "Contemplation",
-        "Synthèse",
-        "Reading Proust",
-        "Oui oui baguette",
-        "Counting Rs in strawberry",
-        "Seeding Mistral weights",
-        "Vibing",
-        "Sending good vibes",
-        "Petting le chat",
+        "Analysiere",
+        "Denke nach",
+        "Verarbeite",
+        "Recherchiere",
+        "Optimiere",
+        "Berechne",
+        "Synthetisiere",
+        "Generiere",
     ]
 
     EASTER_EGGS_HALLOWEEN: ClassVar[list[str]] = [
-        "Trick or treating",
-        "Carving pumpkins",
-        "Summoning spirits",
-        "Brewing potions",
-        "Haunting the terminal",
-        "Petting le chat noir",
+        "Geisterstunde",
+        "Kuerbisse schnitzen",
     ]
 
     EASTER_EGGS_DECEMBER: ClassVar[list[str]] = [
-        "Wrapping presents",
-        "Decorating the tree",
-        "Drinking hot chocolate",
-        "Building snowmen",
-        "Writing holiday cards",
+        "Geschenke einpacken",
+        "Gluehwein trinken",
     ]
 
     def __init__(self, status: str | None = None, *, show_hint: bool = True) -> None:

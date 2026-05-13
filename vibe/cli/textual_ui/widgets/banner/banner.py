@@ -58,7 +58,7 @@ class Banner(Static):
 
             with Vertical(id="banner-info"):
                 with Horizontal(classes="banner-line"):
-                    yield NoMarkupStatic("Mistral Vibe", id="banner-brand")
+                    yield NoMarkupStatic("KI Workplace CLI", id="banner-brand")
                     yield NoMarkupStatic(" ", classes="banner-spacer")
                     yield NoMarkupStatic(f"v{__version__} · ", classes="banner-meta")
                     yield NoMarkupStatic("", id="banner-model")

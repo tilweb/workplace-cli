@@ -11,7 +11,8 @@ from vibe.core.autocompletion.file_indexer.ignore_rules import WALK_SKIP_DIR_NAM
 
 logger = logging.getLogger("vibe")
 
-_VIBE_DIR = ".vibe"
+# === ADACOR PATCH: per-project config dir umbenannt .vibe → .workplace ===
+_VIBE_DIR = ".workplace"
 _TOOLS_SUBDIR = Path(_VIBE_DIR) / "tools"
 _VIBE_SKILLS_SUBDIR = Path(_VIBE_DIR) / "skills"
 _AGENTS_SUBDIR = Path(_VIBE_DIR) / "agents"

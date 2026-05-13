@@ -10,155 +10,80 @@ from vibe.cli.textual_ui.widgets.braille_renderer import render_braille
 
 WIDTH = 22
 HEIGHT = 12
+
+# "KI" letters in dot coordinates (x values per row y)
+# K: stem at x=1,2 with diagonals, I: bar at top/bottom with stem at x=16,17
 STARTING_DOTS = [
-    set[int](),
-    {6, 7, 15, 19},
-    {5, 8, 14, 16, 18, 20},
-    {4, 6, 7, 14, 17, 20},
-    {3, 5, 10, 11, 12, 14, 20},
-    {3, 5, 9, 13, 14, 16, 18, 20},
-    {3, 5, 8, 13, 17, 21},
-    {3, 6, 7, 8, 11, 14, 15, 16, 18, 19, 20},
-    {4, 5, 8, 12, 17, 19},
-    {6, 7, 8, 13, 18, 20},
-    {9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
-    set[int](),
+    set(),                                          # y=0:  (animation zone for I spark)
+    {1, 2, 8, 9, 14, 15, 16, 17, 18, 19},         # y=1:  K top + I top bar
+    {1, 2, 7, 8, 16, 17},                          # y=2
+    {1, 2, 5, 6, 16, 17},                          # y=3
+    {1, 2, 4, 5, 16, 17},                          # y=4
+    {1, 2, 3, 4, 16, 17},                          # y=5:  K junction
+    {1, 2, 4, 5, 16, 17},                          # y=6
+    {1, 2, 5, 6, 16, 17},                          # y=7
+    {1, 2, 7, 8, 16, 17},                          # y=8
+    {1, 2, 8, 9, 14, 15, 16, 17, 18, 19},         # y=9:  K bottom + I bottom bar
+    set(),                                          # y=10: (animation zone for K kick)
+    set(),                                          # y=11
 ]
-QUEUE_RIGHT_TO_MID = {
-    "remove": {1j + 6, 1j + 7, 2j + 8, 3j + 4, 3j + 6, 3j + 7, 8j + 4, 8j + 5},
-    "add": {1j + 4, 2j + 3, 3j + 3, 3j + 5, 7j + 5, 8j + 3, 9j + 4, 9j + 5},
-}
-QUEUE_MID_TO_RIGHT = {
-    "remove": QUEUE_RIGHT_TO_MID["add"],
-    "add": QUEUE_RIGHT_TO_MID["remove"],
-}
-QUEUE_MID_TO_LEFT = {
-    "remove": {1j + 4, 2j + 5, 3j + 3, 3j + 5, 7j + 5, 8j + 3, 9j + 4, 9j + 5},
-    "add": {1j + 1, 1j + 2, 2j, 3j + 1, 3j + 2, 3j + 4, 8j + 4, 8j + 5},
-}
-QUEUE_LEFT_TO_MID = {
-    "remove": QUEUE_MID_TO_LEFT["add"],
-    "add": QUEUE_MID_TO_LEFT["remove"],
-}
+
+# --- Animation transitions ---
 WAIT = {"remove": set[int](), "add": set[int]()}
-HEAD_RIGHT = {"remove": {5j + 16, 5j + 18, 6j + 17}, "add": {5j + 17, 5j + 19, 6j + 18}}
-HEAD_LEFT = {"remove": {5j + 17, 5j + 19, 6j + 18}, "add": {5j + 16, 5j + 18, 6j + 17}}
-HEAD_DOWN = {
-    "remove": {
-        1j + 15,
-        1j + 19,
-        2j + 14,
-        2j + 16,
-        2j + 18,
-        2j + 20,
-        3j + 17,
-        5j + 17,
-        5j + 19,
-        6j + 13,
-        6j + 18,
-        6j + 21,
-        7j + 14,
-        7j + 15,
-        7j + 16,
-        7j + 19,
-        7j + 20,
-    },
-    "add": {
-        2j + 15,
-        2j + 19,
-        3j + 16,
-        3j + 18,
-        4j + 17,
-        6j + 14,
-        6j + 17,
-        6j + 19,
-        6j + 20,
-        7j + 13,
-        7j + 18,
-        7j + 21,
-        8j + 14,
-        8j + 15,
-        8j + 16,
-        8j + 18,
-        8j + 20,
-    },
+
+# I top: spark/pulse appears above I center (y=0)
+I_SPARK_ON = {
+    "remove": set[int](),
+    "add": {0j + 16, 0j + 17},
 }
-HEAD_UP = {
-    "remove": {
-        2j + 15,
-        2j + 19,
-        3j + 16,
-        3j + 18,
-        4j + 17,
-        6j + 14,
-        6j + 17,
-        6j + 19,
-        6j + 20,
-        7j + 13,
-        7j + 18,
-        7j + 21,
-        8j + 14,
-        8j + 15,
-        8j + 16,
-        8j + 18,
-        8j + 20,
-    },
-    "add": {
-        1j + 15,
-        1j + 19,
-        2j + 14,
-        2j + 16,
-        2j + 18,
-        2j + 20,
-        3j + 17,
-        5j + 17,
-        5j + 19,
-        6j + 13,
-        6j + 18,
-        6j + 21,
-        7j + 14,
-        7j + 15,
-        7j + 16,
-        7j + 18,
-        7j + 19,
-        7j + 20,
-    },
+I_SPARK_EXPAND = {
+    "remove": set[int](),
+    "add": {0j + 15, 0j + 18},
 }
-BLINK_EYES_HEAD_HIGH = [
-    {"remove": {5j + 16, 5j + 18}, "add": set[int]()},
-    {"remove": set[int](), "add": {5j + 16, 5j + 18}},
-]
-BLINK_EYES_HEAD_LOW = [
-    {"remove": {6j + 17, 6j + 19}, "add": set[int]()},
-    {"remove": set[int](), "add": {6j + 17, 6j + 19}},
-]
+I_SPARK_CONTRACT = {
+    "remove": {0j + 15, 0j + 18},
+    "add": set[int](),
+}
+I_SPARK_OFF = {
+    "remove": {0j + 16, 0j + 17},
+    "add": set[int](),
+}
+
+# K bottom: diagonal legs extend outward at y=10
+K_LEFT_KICK = {
+    "remove": set[int](),
+    "add": {10j + 0, 10j + 1},
+}
+K_RIGHT_KICK = {
+    "remove": set[int](),
+    "add": {10j + 9, 10j + 10},
+}
+K_LEFT_BACK = {
+    "remove": {10j + 0, 10j + 1},
+    "add": set[int](),
+}
+K_RIGHT_BACK = {
+    "remove": {10j + 9, 10j + 10},
+    "add": set[int](),
+}
+
 TRANSITIONS = [
-    *BLINK_EYES_HEAD_HIGH,
     WAIT,
-    QUEUE_RIGHT_TO_MID,
-    HEAD_RIGHT,
+    I_SPARK_ON,        # dot appears above I
     WAIT,
-    QUEUE_MID_TO_LEFT,
+    I_SPARK_EXPAND,    # spark widens
     WAIT,
-    QUEUE_LEFT_TO_MID,
+    I_SPARK_CONTRACT,  # spark narrows
+    I_SPARK_OFF,       # spark disappears
     WAIT,
-    HEAD_DOWN,
+    K_LEFT_KICK,       # K left leg extends down
+    K_RIGHT_KICK,      # K right leg extends down
     WAIT,
-    QUEUE_MID_TO_RIGHT,
-    *BLINK_EYES_HEAD_LOW,
+    K_LEFT_BACK,       # left leg retracts
+    K_RIGHT_BACK,      # right leg retracts
     WAIT,
-    QUEUE_RIGHT_TO_MID,
     WAIT,
-    QUEUE_MID_TO_LEFT,
-    WAIT,
-    HEAD_UP,
-    WAIT,
-    QUEUE_LEFT_TO_MID,
-    HEAD_LEFT,
-    WAIT,
-    QUEUE_MID_TO_RIGHT,
 ]
-# cf render_braille() docstring for coordinates convention
 
 
 class PetitChat(Static):
@@ -176,7 +101,7 @@ class PetitChat(Static):
     def on_mount(self) -> None:
         self._inner = self.query_one(".petit-chat", Static)
         if self._do_animate:
-            self._timer = self.set_interval(0.16, self._apply_next_transition)
+            self._timer = self.set_interval(0.18, self._apply_next_transition)
 
     def freeze_animation(self) -> None:
         self._freeze_requested = True

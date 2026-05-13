@@ -45,7 +45,7 @@ class HarnessFilesManager:
     def config_file(self) -> Path | None:
         workdir = self.trusted_workdir
         if workdir is not None:
-            candidate = workdir / ".vibe" / "config.toml"
+            candidate = workdir / ".workplace" / "config.toml"
             if candidate.is_file():
                 return candidate
         if "user" in self.sources:
@@ -114,7 +114,7 @@ class HarnessFilesManager:
         workdir = self.trusted_workdir
         if workdir is None:
             return []
-        candidate = workdir / ".vibe" / "prompts"
+        candidate = workdir / ".workplace" / "prompts"
         return [candidate] if candidate.is_dir() else []
 
     @property

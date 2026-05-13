@@ -16,10 +16,12 @@ class GlobalPath:
         return self._resolver()
 
 
-_DEFAULT_VIBE_HOME = Path.home() / ".vibe"
+_DEFAULT_VIBE_HOME = Path.home() / ".workplace-cli"
 
 
 def _get_vibe_home() -> Path:
+    if vibe_home := os.getenv("WORKPLACE_HOME"):
+        return Path(vibe_home).expanduser().resolve()
     if vibe_home := os.getenv("VIBE_HOME"):
         return Path(vibe_home).expanduser().resolve()
     return _DEFAULT_VIBE_HOME

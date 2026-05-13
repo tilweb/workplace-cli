@@ -161,6 +161,10 @@ DEFAULT_MISTRAL_API_ENV_KEY = "MISTRAL_API_KEY"
 DEFAULT_MISTRAL_BROWSER_AUTH_BASE_URL = "https://console.mistral.ai"
 DEFAULT_MISTRAL_BROWSER_AUTH_API_BASE_URL = "https://console.mistral.ai/api"
 
+# === ADACOR PATCH START: Adacor API Env-Key ===
+DEFAULT_ADACOR_API_ENV_KEY = "ADACOR_AI_API_KEY"
+# === ADACOR PATCH END ===
+
 
 class ProviderConfig(BaseModel):
     name: str
@@ -414,6 +418,16 @@ MISTRAL_OTEL_PATH = "/telemetry"
 _DEFAULT_MISTRAL_SERVER_URL = "https://api.mistral.ai"
 
 DEFAULT_PROVIDERS = [
+    # === ADACOR PATCH START: Adacor als Default-Provider ===
+    # Adacor wird ZUERST gelistet, damit DEFAULT_ACTIVE_MODEL (= DEFAULT_MODELS[0])
+    # automatisch ein Adacor-Modell ist. Bei Upstream-Merges Reihenfolge erhalten.
+    ProviderConfig(
+        name="adacor",
+        api_base="https://api.adacor.ai/chat/privateai/v1",
+        api_key_env_var=DEFAULT_ADACOR_API_ENV_KEY,
+        backend=Backend.GENERIC,
+    ),
+    # === ADACOR PATCH END ===
     ProviderConfig(
         name="mistral",
         api_base=f"{_DEFAULT_MISTRAL_SERVER_URL}/v1",
@@ -430,6 +444,17 @@ DEFAULT_PROVIDERS = [
 ]
 
 DEFAULT_MODELS = [
+    # === ADACOR PATCH START: Default-Modelle bei Adacor ===
+    # Erstes Modell wird DEFAULT_ACTIVE_MODEL. Weitere Adacor-Modelle bitte
+    # hier oben anhaengen.
+    ModelConfig(
+        name="qwen3-a3b-30b-256k",
+        provider="adacor",
+        alias="qwen3-30b",
+        input_price=0.0,
+        output_price=0.0,
+    ),
+    # === ADACOR PATCH END ===
     ModelConfig(
         name="mistral-vibe-cli-latest",
         provider="mistral",
@@ -489,6 +514,10 @@ DEFAULT_TTS_MODELS = [
 
 
 class VibeConfig(BaseSettings):
+    # === ADACOR: DEFAULT_ACTIVE_MODEL = DEFAULT_MODELS[0].alias.
+    # DEFAULT_MODELS startet bei uns mit Qwen 30B (siehe Adacor-Patch), also
+    # ist DEFAULT_ACTIVE_MODEL effektiv "qwen3-30b" — Upstream's dynamische
+    # Aufloesung greift fuer uns korrekt. ===
     active_model: str = DEFAULT_ACTIVE_MODEL
     vim_keybindings: bool = False
     disable_welcome_banner_animation: bool = False
@@ -634,7 +663,7 @@ class VibeConfig(BaseSettings):
     )
 
     model_config = SettingsConfigDict(
-        env_prefix="VIBE_", case_sensitive=False, extra="ignore"
+        env_prefix="WORKPLACE_", case_sensitive=False, extra="ignore"
     )
 
     def model_dump(self, **kwargs: Any) -> dict[str, Any]:

@@ -1,21 +1,22 @@
 [project]
-name = "mistral-vibe"
-version = "2.9.4"
-description = "Minimal CLI coding agent by Mistral"
+name = "workplace-cli"
+version = "1.0.0"
+description = "Adacor Workplace CLI — Coding Agent powered by Adacor AI (fork of mistral-vibe)"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Mistral AI" }]
+authors = [{ name = "KI Workplace" }]
 keywords = [
     "ai",
     "cli",
     "coding-assistant",
-    "mistral",
+    "workplace",
     "llm",
     "developer-tools",
+    "adacor",
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
@@ -66,10 +67,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mistralai/mistral-vibe"
-Repository = "https://github.com/mistralai/mistral-vibe"
-Issues = "https://github.com/mistralai/mistral-vibe/issues"
-Documentation = "https://github.com/mistralai/mistral-vibe#readme"
+Homepage = "https://github.com/your-org/workplace-cli"
+Repository = "https://github.com/your-org/workplace-cli"
+Issues = "https://github.com/your-org/workplace-cli/issues"
+Documentation = "https://github.com/your-org/workplace-cli#readme"
 
 [build-system]
 requires = ["hatchling", "hatch-vcs", "editables"]
@@ -83,6 +84,7 @@ include = ["vibe/"]
 
 
 [project.scripts]
+workplace = "vibe.cli.entrypoint:main"
 vibe = "vibe.cli.entrypoint:main"
 vibe-acp = "vibe.acp.entrypoint:main"
 

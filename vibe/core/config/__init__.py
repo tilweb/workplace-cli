@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from vibe.core.config._settings import (
+    DEFAULT_ADACOR_API_ENV_KEY,
     DEFAULT_MISTRAL_API_ENV_KEY,
     DEFAULT_MODELS,
     DEFAULT_PROVIDERS,
@@ -62,6 +63,7 @@ from vibe.core.config.schema import (
 )
 
 __all__ = [
+    "DEFAULT_ADACOR_API_ENV_KEY",
     "DEFAULT_MISTRAL_API_ENV_KEY",
     "DEFAULT_MODELS",
     "DEFAULT_PROVIDERS",

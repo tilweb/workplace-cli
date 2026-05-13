@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Workplace CLI Releases
+
+### [1.0.0] — 2026-05-13
+
+Initialer Workplace-CLI-Release auf Basis Mistral Vibe v2.9.4.
+
+**Adacor-Branding und -Identitaet**
+- Paket umbenannt: `mistral-vibe` → `workplace-cli`
+- Binary: `vibe` → `workplace` (Legacy-Binary `vibe` bleibt fuer Migration verfuegbar)
+- Banner, Spinner-Farben (Mistral-Orange → Workplace-Purple), Persona-Prompts
+
+**Provider/Modelle**
+- Adacor AI (`api.adacor.ai/chat/privateai/v1`) als Default-Provider
+- Qwen 3 30B (256k) als Default-Modell
+- Mistral- und llama.cpp-Provider bleiben fuer User mit eigenem Setup verfuegbar
+
+**Konfiguration**
+- Per-Project-Config-Dir: `.vibe/` → `.workplace/`
+- User-Home-Config: `~/.vibe/` → `~/.config/workplace/`
+- Env-Prefix: `VIBE_` → `WORKPLACE_`
+
+**Datenschutz**
+- Telemetrie standardmaessig **deaktiviert** (`enable_telemetry = False`)
+- Mistral-Datalake-Endpoint entfernt
+- Opt-in: `WORKPLACE_TELEMETRY=local` schreibt JSONL in `~/.config/workplace/usage.jsonl`. `=remote` benoetigt `WORKPLACE_TELEMETRY_URL`.
+
+**Bugfix uebernommen**
+- `tool_choice`-Parameter nur senden wenn auch `tools` mitgegeben werden (sonst rejected OpenAI-kompatible Backends wie Adacor den Request)
+
+---
+
+## Upstream (Mistral Vibe) Releases
+
 ## [2.9.4] - 2026-05-05
 
 ### Added

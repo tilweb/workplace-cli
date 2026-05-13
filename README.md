@@ -1,9 +1,19 @@
-# Mistral Vibe
+# Workplace CLI
 
-[![PyPI Version](https://img.shields.io/pypi/v/mistral-vibe)](https://pypi.org/project/mistral-vibe)
+> **Workplace CLI** ist ein interner Fork von [Mistral Vibe](https://github.com/mistralai/mistral-vibe) mit Adacor-spezifischen Anpassungen: Adacor AI als Default-Provider, Qwen 3 30B als Default-Modell, Branding, lokale Telemetrie. Apache-2.0-lizenziert.
+> Vollstaendige Install-Anleitung folgt — bis dahin: `uv tool install git+https://github.com/tilweb/workplace-cli`.
+
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/release/python-3120/)
-[![CI Status](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml/badge.svg)](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/mistralai/mistral-vibe)](https://github.com/mistralai/mistral-vibe/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
+---
+
+## Original-Projekt (Mistral Vibe)
+
+Die folgende Dokumentation stammt aus dem Upstream-Projekt und beschreibt den Funktionsumfang. Workplace-CLI-spezifische Hinweise (Install, Konfiguration, Adacor-Modelle) findest du oben.
+
+[![PyPI Version (upstream)](https://img.shields.io/pypi/v/mistral-vibe)](https://pypi.org/project/mistral-vibe)
+[![CI Status (upstream)](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml/badge.svg)](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml)
 
 ```
 ██████████████████░░

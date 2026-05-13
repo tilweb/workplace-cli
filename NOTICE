@@ -1,0 +1,27 @@
+Workplace CLI
+Copyright 2026 Adacor Hosting GmbH
+
+This product includes software originally developed by Mistral AI
+("Mistral Vibe", https://github.com/mistralai/mistral-vibe),
+licensed under the Apache License, Version 2.0.
+
+Substantial modifications by Adacor Hosting GmbH:
+  - Branding and product identity (renamed to "Workplace CLI")
+  - Adacor AI as default provider, Qwen 3 30B (256k) as default model
+  - Local-first telemetry (originally sent to Mistral datalake)
+  - Configuration directory rename (~/.vibe → ~/.config/workplace,
+    .vibe/ → .workplace/)
+  - Environment-variable prefix VIBE_ → WORKPLACE_
+
+The original Apache-2.0 License applies to all derived work.
+See LICENSE for the full license text. See CHANGELOG.md for details on
+Workplace-CLI-specific changes.
+
+Original software:
+  Copyright 2025 Mistral AI
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0

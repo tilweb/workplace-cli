@@ -1,5 +1,4 @@
-"""
-Telemetry Client — Workplace CLI Fork
+"""Telemetry Client — Workplace CLI Fork
 
 === ADACOR PATCH: kompletter Rewrite ===
 
@@ -51,7 +50,7 @@ if TYPE_CHECKING:
 
 def _get_mode() -> Literal["off", "local", "remote"]:
     raw = os.environ.get("WORKPLACE_TELEMETRY", "off").strip().lower()
-    if raw in ("local", "remote"):
+    if raw in {"local", "remote"}:
         return raw  # type: ignore[return-value]
     return "off"
 
@@ -137,7 +136,8 @@ class TelemetryClient:
 
     def _write_local(self, event_name: str, properties: dict[str, Any]) -> None:
         """Append JSONL-Event in lokale Datei. Fire-and-forget, Fehler werden
-        verschluckt (Telemetrie darf nie den eigentlichen CLI-Lauf brechen)."""
+        verschluckt (Telemetrie darf nie den eigentlichen CLI-Lauf brechen).
+        """
         try:
             path = _local_telemetry_file()
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -163,7 +163,7 @@ class TelemetryClient:
 
         properties = self.build_client_event_metadata() | properties
         if correlation_id:
-            properties = properties | {"correlation_id": correlation_id}
+            properties |= {"correlation_id": correlation_id}
 
         mode = _get_mode()
         if mode == "local":

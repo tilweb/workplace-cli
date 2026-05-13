@@ -530,7 +530,11 @@ class VibeConfig(BaseSettings):
     active_transcribe_model: str = "voxtral-realtime"
     active_tts_model: str = "voxtral-tts"
     bypass_tool_permissions: bool = False
-    enable_telemetry: bool = True
+    # === ADACOR PATCH: Telemetrie standardmaessig AUS ===
+    # Workplace-CLI sendet KEINE Telemetrie an Mistral. User koennen lokale
+    # JSONL-Telemetrie via WORKPLACE_TELEMETRY=local opt-in aktivieren.
+    enable_telemetry: bool = False
+    # === ADACOR PATCH END ===
     system_prompt_id: str = "cli"
     include_commit_signature: bool = True
     include_model_info: bool = True

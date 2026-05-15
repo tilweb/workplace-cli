@@ -1,16 +1,80 @@
 # Workplace CLI
 
-> **Workplace CLI** ist ein interner Fork von [Mistral Vibe](https://github.com/mistralai/mistral-vibe) mit Adacor-spezifischen Anpassungen: Adacor AI als Default-Provider, Qwen 3 30B als Default-Modell, Branding, lokale Telemetrie. Apache-2.0-lizenziert.
-> Vollstaendige Install-Anleitung folgt — bis dahin: `uv tool install git+https://github.com/tilweb/workplace-cli`.
-
-[![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/release/python-3120/)
+[![CI](https://github.com/tilweb/workplace-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/tilweb/workplace-cli/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/release/python-3120/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
+**Coding-Agent für die Shell, powered by Adacor AI.** Workplace CLI ist Adacor's interner Fork von [Mistral Vibe](https://github.com/mistralai/mistral-vibe) — gleiche TUI, gleiche Tool-Mechanik, aber mit Adacor AI als Default-Provider (Qwen 3 30B 256k), Workplace-Branding, lokaler Telemetrie und ohne Mistral-Datalake-Upload.
+
+## Quick Install
+
+### Homebrew (empfohlen)
+
+```sh
+brew tap tilweb/tap
+brew install workplace-cli
+```
+
+### Alternativ: uv tool
+
+```sh
+uv tool install git+https://github.com/tilweb/workplace-cli
+```
+
+> macOS-Hinweis: Bei `brew install` kann eine Warnung „Failed to fix install linkage" erscheinen — die ist tolerierbar, der Install ist trotzdem komplett. Hintergrund: einzelne Rust-Wheels (rpds-py, watchfiles) haben zu schmale Mach-O-Header für Brew's Pfad-ReWrites, alles bleibt im venv aber self-konsistent.
+
+## Setup
+
+```sh
+# 1. API-Key setzen (in ~/.zshrc oder ~/.bashrc)
+export ADACOR_AI_API_KEY="dein-api-key-hier"
+
+# 2. Erster Start
+workplace                              # TUI öffnen
+workplace -p "Erkläre src/foo.py"      # One-Shot
+
+# 3. Andere Modelle (optional)
+workplace --setup                      # interaktiver Setup
+```
+
+Default-Modell: `qwen3-30b` (Adacor AI, 256k Context). Wechseln per Slash-Command `/agent` in der TUI oder `--agent`-Flag.
+
+## Konfiguration
+
+| Pfad | Inhalt |
+|---|---|
+| `~/.config/workplace/config.toml` | User-Config (Modell, Theme, …) |
+| `~/.config/workplace/credentials.json` | API-Keys (alternativ zur ENV-Var) |
+| `.workplace/` im Projekt | Pro-Projekt-Tools, Skills, Agents |
+| `.agents/` im Projekt | Pro-Projekt-Agents (Standard von vielen Repos) |
+
+**Env-Vars** (Auswahl, alle mit `WORKPLACE_`-Prefix):
+- `WORKPLACE_TELEMETRY` — `off` (Default), `local`, `remote`. Bei `local`: JSONL-Append in `~/.config/workplace/usage.jsonl`. Telemetrie geht **niemals** an Mistral.
+- `WORKPLACE_TELEMETRY_URL` — bei `remote` der Endpoint. Ohne Default.
+
+## Update
+
+```sh
+# Homebrew
+brew update && brew upgrade workplace-cli
+
+# uv tool
+uv tool upgrade workplace-cli
+```
+
+## Beziehung zu Mistral Vibe
+
+Workplace CLI ist ein **Fork** von Mistral Vibe — unter Apache-2.0 lizenziert, Lizenztext + Attribution siehe [`LICENSE`](LICENSE) und [`NOTICE`](NOTICE). Wir folgen Upstream-Releases per regelmäßigem Merge; Workplace-CLI-spezifische Patches sind im Code mit `# === ADACOR PATCH START/END ===`-Markern gekennzeichnet, sodass Konflikte bei Upstream-Sync schnell zu sehen sind.
+
+**Versionierung**: eigene SemVer ab `1.0.0`. Die Upstream-Basis-Version wird in `workplace --version` und im `CHANGELOG.md` mitgeführt (`v1.0.0 = basiert auf Mistral Vibe v2.9.4`).
+
+Releases siehe [Releases](https://github.com/tilweb/workplace-cli/releases), Changelog: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## Original-Projekt (Mistral Vibe)
+## Upstream-Dokumentation (Mistral Vibe)
 
-Die folgende Dokumentation stammt aus dem Upstream-Projekt und beschreibt den Funktionsumfang. Workplace-CLI-spezifische Hinweise (Install, Konfiguration, Adacor-Modelle) findest du oben.
+Die folgende Dokumentation stammt aus dem Upstream-Projekt und beschreibt den Funktionsumfang (Tools, TUI-Bedienung, Agent-System). Workplace-CLI-spezifische Anpassungen (siehe oben) ersetzen Mistral-spezifische Defaults, das Konzept bleibt identisch.
 
 [![PyPI Version (upstream)](https://img.shields.io/pypi/v/mistral-vibe)](https://pypi.org/project/mistral-vibe)
 [![CI Status (upstream)](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml/badge.svg)](https://github.com/mistralai/mistral-vibe/actions/workflows/ci.yml)

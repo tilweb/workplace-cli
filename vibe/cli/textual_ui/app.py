@@ -1634,6 +1634,47 @@ class VibeApp(App):  # noqa: PLR0904
             )
         )
 
+    # === ADACOR PATCH START: /skills command ===
+    async def _show_skills(self, **kwargs: Any) -> None:
+        skills = self.agent_loop.skill_manager.available_skills
+        if not skills:
+            await self._mount_and_scroll(
+                UserCommandMessage(
+                    "## Skills\n\nNo skills are currently loaded.\n\n"
+                    "Add user-level skills under `~/.workplace-cli/skills/<name>/SKILL.md` "
+                    "or project-level under `.workplace/skills/<name>/SKILL.md` "
+                    "(folder must be trusted)."
+                )
+            )
+            return
+
+        invocable: list[tuple[str, str]] = []
+        auto_only: list[tuple[str, str]] = []
+        for name, info in sorted(skills.items()):
+            target = invocable if info.user_invocable else auto_only
+            target.append((name, info.description))
+
+        lines = ["## Skills"]
+        if invocable:
+            lines.append("")
+            lines.append("### Invoke with a slash command")
+            for name, desc in invocable:
+                lines.append(f"- **`/{name}`** — {desc}")
+        if auto_only:
+            lines.append("")
+            lines.append("### Auto-loaded by the agent (not user-invocable)")
+            for name, desc in auto_only:
+                lines.append(f"- **{name}** — {desc}")
+
+        lines.append("")
+        lines.append(
+            "Tip: append extra instructions after the skill, "
+            "e.g. `/skill-name focus on the auth flow`."
+        )
+        await self._mount_and_scroll(UserCommandMessage("\n".join(lines)))
+
+    # === ADACOR PATCH END ===
+
     async def _show_status(self, **kwargs: Any) -> None:
         stats = self.agent_loop.stats
         status_text = f"""## Agent Statistics

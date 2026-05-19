@@ -112,6 +112,13 @@ class CommandRegistry:
                 description="Display agent statistics",
                 handler="_show_status",
             ),
+            # === ADACOR PATCH: /skills command ===
+            "skills": Command(
+                aliases=frozenset(["/skills"]),
+                description="List available skills (user-invocable and auto-loaded)",
+                handler="_show_skills",
+            ),
+            # === ADACOR PATCH END ===
             "teleport": Command(
                 aliases=frozenset(["/teleport"]),
                 description="Teleport session to Vibe Code",

@@ -27,6 +27,7 @@ class TestCommandRegistry:
         assert registry.get_command_name("/clear") == "clear"
         assert registry.get_command_name("/exit") == "exit"
         assert registry.get_command_name("/data-retention") == "data-retention"
+        assert registry.get_command_name("/skills") == "skills"
 
     def test_get_command_name_normalizes_input(self) -> None:
         registry = CommandRegistry()

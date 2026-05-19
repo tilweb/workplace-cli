@@ -36,5 +36,8 @@ LOG_FILE = GlobalPath(lambda: VIBE_HOME.path / "logs" / "vibe.log")
 CACHE_FILE = GlobalPath(lambda: VIBE_HOME.path / "cache.toml")
 HISTORY_FILE = GlobalPath(lambda: VIBE_HOME.path / "vibehistory")
 PLANS_DIR = GlobalPath(lambda: VIBE_HOME.path / "plans")
+# === ADACOR PATCH START: dynamic model discovery cache ===
+MODELS_CACHE_FILE = GlobalPath(lambda: VIBE_HOME.path / "models-cache.json")
+# === ADACOR PATCH END ===
 
 DEFAULT_TOOL_DIR = GlobalPath(lambda: VIBE_ROOT / "core" / "tools" / "builtins")

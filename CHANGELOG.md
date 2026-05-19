@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Dynamische Modell-Auswahl**
+- `/model` listet jetzt Provider-gruppiert: Adacor-Modelle werden zur Laufzeit aus `api.adacor.ai/chat/privateai/v1/models` geholt (kein Auth noetig fuer den Endpoint), Embedding-/Transcribe-Modelle werden gefiltert
+- Ollama wird auto-detected: wenn `http://localhost:11434/v1/models` antwortet, taucht der Provider mit allen lokal installierten Modellen im Picker auf — ohne Config-Edit
+- Cache in `~/.workplace-cli/models-cache.json` (TTL 1h, override via `WORKPLACE_MODEL_CACHE_TTL_SEC`). Discovered Modelle landen NICHT in `config.toml`, nur das ausgewaehlte `active_model`-Alias
+- Picker hat Loading-State („⟳ Refreshing models…") waehrend Hintergrund-Refresh; bereits bekannte Modelle bleiben sofort verfuegbar (optimistisches Rendern)
+- Fallback: wenn `active_model` aus dem Cache verschwunden ist (z.B. Cache geleert), faellt `VibeConfig.load()` mit Warn-Log auf den Default-Modell-Alias zurueck statt zu crashen
+- Files: neu `vibe/core/llm/model_discovery.py`, `tests/test_model_discovery.py`, `tests/test_model_discovery_load_integration.py`, `tests/cli/test_ui_model_picker_dynamic.py`; geaendert `vibe/cli/textual_ui/widgets/model_picker.py`, `vibe/cli/textual_ui/app.py`, `vibe/core/config/_settings.py`, `vibe/core/paths/`
+
 **Bugfixes**
 - `app.tcss`: nicht-aufgeloeste CSS-Variable `$mistral_orange` durch `$workplace_purple` ersetzt (`border-remote`-Style)
 - Theme-Name `textual-ansi` ist in Textual 8.2.5+ umbenannt zu `ansi-dark` — startete sonst mit `InvalidThemeError`. Neuer Helper `vibe/cli/textual_ui/_theme_compat.py` waehlt zur Laufzeit das passende Theme (8.2.4 ✓ + 8.2.5+ ✓), mit Fallback auf `textual-dark`. Drei Aufruf-Stellen patched: `app.py`, `setup/onboarding/__init__.py`, `setup/trusted_folders/trust_folder_dialog.py`

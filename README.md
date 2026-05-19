@@ -39,6 +39,15 @@ workplace --setup                      # interaktiver Setup
 
 Default-Modell: `qwen3-30b` (Adacor AI, 256k Context). Wechseln per Slash-Command `/agent` in der TUI oder `--agent`-Flag.
 
+## Modell-Auswahl
+
+Beim Aufruf von `/model` listet die TUI Modelle gruppiert nach Provider:
+
+- **Adacor** — alle Modelle aus `api.adacor.ai/chat/privateai/v1/models` werden zur Laufzeit abgerufen. Embedding- und Transcribe-Modelle (`whisper-*`, `*-e5-*`, `*-embed*`, `*-tts`) werden im Picker ausgeblendet.
+- **Ollama** — wenn ein lokaler Ollama-Server auf `http://localhost:11434` antwortet, taucht er automatisch als Provider auf. Kein Setup, kein Config-Edit.
+
+Discovered Modelle sind im Picker mit `· live` markiert. Die Liste wird in `~/.workplace-cli/models-cache.json` gecached (TTL 1h, override via `WORKPLACE_MODEL_CACHE_TTL_SEC=<sec>`); beim Öffnen von `/model` läuft im Hintergrund ein Refresh. Nur das ausgewählte Modell-Alias wandert nach `config.toml` — die Modell-Liste selbst nicht.
+
 ## Konfiguration
 
 | Pfad | Inhalt |

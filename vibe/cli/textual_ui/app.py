@@ -81,7 +81,7 @@ from vibe.cli.textual_ui.widgets.messages import (
     WarningMessage,
     WhatsNewMessage,
 )
-from vibe.cli.textual_ui.widgets.model_picker import ModelPickerApp
+from vibe.cli.textual_ui.widgets.model_picker import ModelEntry, ModelPickerApp
 from vibe.cli.textual_ui.widgets.narrator_status import NarratorStatus
 from vibe.cli.textual_ui.widgets.no_markup_static import NoMarkupStatic
 from vibe.cli.textual_ui.widgets.path_display import PathDisplay
@@ -2153,11 +2153,87 @@ class VibeApp(App):  # noqa: PLR0904
         if self._current_bottom_app == BottomApp.ModelPicker:
             return
 
-        model_aliases = [m.alias for m in self.config.models]
+        models_by_provider = self._build_models_by_provider()
         current_model = str(self.config.active_model)
         await self._switch_from_input(
-            ModelPickerApp(model_aliases=model_aliases, current_model=current_model)
+            ModelPickerApp(
+                models_by_provider=models_by_provider,
+                current_model=current_model,
+                loading=True,
+            )
         )
+        # === ADACOR PATCH START: dynamic discovery refresh ===
+        # Kick off discovery asynchronously so the picker is immediately
+        # interactive with whatever's in the cache; the list refreshes when
+        # results arrive. Errors per-provider are isolated.
+        asyncio.create_task(self._refresh_models_async())
+        # === ADACOR PATCH END ===
+
+    def _build_models_by_provider(self) -> dict[str, list[ModelEntry]]:
+        provider_order: list[str] = []
+        seen: set[str] = set()
+        for provider in self.config.providers:
+            if provider.name not in seen:
+                provider_order.append(provider.name)
+                seen.add(provider.name)
+        for model in self.config.models:
+            if model.provider not in seen:
+                provider_order.append(model.provider)
+                seen.add(model.provider)
+
+        discovered_providers = {
+            p.name for p in self.config.providers if p.discovered
+        }
+        grouped: dict[str, list[ModelEntry]] = {name: [] for name in provider_order}
+        for model in self.config.models:
+            is_discovered = model.provider in discovered_providers
+            grouped.setdefault(model.provider, []).append(
+                ModelEntry(alias=model.alias, is_discovered=is_discovered)
+            )
+        return {name: entries for name, entries in grouped.items() if entries}
+
+    async def _refresh_models_async(self) -> None:
+        from vibe.core.llm.model_discovery import (
+            get_cache_path,
+            load_cache,
+            probe_ollama,
+            refresh_provider,
+            update_cache_entry,
+            write_cache,
+        )
+
+        cache = load_cache()
+        providers_to_refresh = list(self.config.providers)
+
+        ollama_provider = await probe_ollama()
+        if ollama_provider is not None and not any(
+            p.name == "ollama" for p in providers_to_refresh
+        ):
+            providers_to_refresh.append(ollama_provider)
+
+        for provider in providers_to_refresh:
+            try:
+                models = await refresh_provider(provider)
+            except Exception as exc:
+                self.log.warning(
+                    f"Model discovery failed for provider {provider.name!r}: {exc}"
+                )
+                continue
+            update_cache_entry(cache, provider, models)
+
+        try:
+            write_cache(cache, get_cache_path())
+        except OSError as exc:
+            self.log.warning(f"Could not write models cache: {exc}")
+
+        await self._reload_config()
+        if self._current_bottom_app != BottomApp.ModelPicker:
+            return
+        try:
+            picker = self.query_one(ModelPickerApp)
+        except Exception:
+            return
+        picker.update_models(self._build_models_by_provider(), loading=False)
 
     async def _switch_to_thinking_picker_app(self) -> None:
         if self._current_bottom_app == BottomApp.ThinkingPicker:

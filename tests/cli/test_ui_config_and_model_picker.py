@@ -12,6 +12,16 @@ from vibe.cli.textual_ui.widgets.thinking_picker import ThinkingPickerApp
 from vibe.core.config._settings import THINKING_LEVELS, ModelConfig
 
 
+@pytest.fixture(autouse=True)
+def _disable_model_discovery():
+    """Block real HTTP discovery during picker tests so they stay offline."""
+    with patch(
+        "vibe.cli.textual_ui.app.VibeApp._refresh_models_async",
+        new=AsyncMock(return_value=None),
+    ):
+        yield
+
+
 def _make_config_with_models():
     models = [
         ModelConfig(name="model-a", provider="mistral", alias="alpha"),
@@ -121,7 +131,12 @@ async def test_model_picker_shows_all_models() -> None:
         await pilot.pause(0.2)
 
         picker = app.query_one(ModelPickerApp)
-        assert picker._model_aliases == ["alpha", "beta", "gamma"]
+        aliases = [
+            entry.alias
+            for entries in picker._models_by_provider.values()
+            for entry in entries
+        ]
+        assert aliases == ["alpha", "beta", "gamma"]
         assert picker._current_model == "alpha"
 
 

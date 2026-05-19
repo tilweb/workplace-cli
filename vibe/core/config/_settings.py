@@ -178,6 +178,12 @@ class ProviderConfig(BaseModel):
     project_id: str = ""
     region: str = ""
     extra_headers: dict[str, str] = Field(default_factory=dict)
+    # === ADACOR PATCH START: dynamic discovery marker ===
+    # `True` for providers injected at runtime by model_discovery (e.g. Ollama
+    # via local probe, or cached Adacor models). Picker uses this to show a
+    # "live" badge. Kept on model_dump so AgentProfile round-trips preserve it.
+    discovered: bool = False
+    # === ADACOR PATCH END ===
 
     def _is_legacy_mistral_provider_without_backend(self) -> bool:
         return (
@@ -1050,7 +1056,32 @@ class VibeConfig(BaseSettings):
     @classmethod
     def load(cls, **overrides: Any) -> VibeConfig:
         cls._migrate()
-        return cls(**(overrides or {}))
+        instance = cls(**(overrides or {}))
+        # === ADACOR PATCH START: dynamic discovery merge ===
+        # Merge cached/discovered providers and models into the live config
+        # after TOML+env validation. These entries are virtual (not persisted
+        # to config.toml); the discovery service refreshes them on `/model`.
+        # If the persisted `active_model` no longer exists (e.g. cache was
+        # cleared while a discovered model was active), fall back to the
+        # built-in default and log a warning — better UX than the ValueError
+        # raised later by get_active_model().
+        from vibe.core.llm.model_discovery import load_cache, merge_into_config
+
+        merge_into_config(instance, load_cache())
+        aliases = {m.alias for m in instance.models}
+        if instance.active_model not in aliases:
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "active_model %r is not in the available models — falling back to %r. "
+                "This usually means the model came from the discovery cache and the "
+                "cache has been cleared.",
+                instance.active_model,
+                DEFAULT_ACTIVE_MODEL,
+            )
+            instance.active_model = DEFAULT_ACTIVE_MODEL
+        # === ADACOR PATCH END ===
+        return instance
 
     @classmethod
     def create_default(cls) -> dict[str, Any]:

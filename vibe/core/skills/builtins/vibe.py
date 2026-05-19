@@ -4,24 +4,25 @@ from vibe.core.skills.models import SkillInfo
 
 SKILL = SkillInfo(
     name="vibe",
-    description="Understand the Vibe CLI application internals: configuration, VIBE_HOME structure, available parameters, agents, skills, tools, and how to inspect or update the user's setup. Use this skill when the user asks about how Vibe works, wants to configure it, or when you need to understand the runtime environment.",
+    description="Understand the Workplace CLI application internals: configuration, WORKPLACE_HOME structure, available parameters, agents, skills, tools, and how to inspect or update the user's setup. Use this skill when the user asks about how Workplace CLI works, wants to configure it, or when you need to understand the runtime environment.",
     user_invocable=False,
-    prompt="""# Vibe CLI Self-Awareness
+    prompt="""# Workplace CLI Self-Awareness
 
-You are running inside **Mistral Vibe**, a CLI coding agent built by Mistral AI.
-This skill gives you full knowledge of the application internals so you can help
-the user understand, configure, and troubleshoot their Vibe installation.
+You are running inside **Workplace CLI**, Adacor's internal coding agent
+(a fork of Mistral Vibe). This skill gives you full knowledge of the
+application internals so you can help the user understand, configure, and
+troubleshoot their Workplace CLI installation.
 
-## VIBE_HOME
+## WORKPLACE_HOME
 
-The user's Vibe home directory defaults to `~/.vibe` but can be overridden via
-the `VIBE_HOME` environment variable. All user-level configuration, skills, tools,
+The user's Workplace CLI home directory defaults to `~/.workplace-cli` but can be
+overridden via the `WORKPLACE_HOME` environment variable (or the legacy `VIBE_HOME`). All user-level configuration, skills, tools,
 agents, prompts, logs, and session data live here.
 
 ### Directory Structure
 
 ```
-~/.vibe/
+~/.workplace-cli/
   config.toml          # Main configuration file (TOML format)
   hooks.toml           # User-level hook definitions (experimental)
   .env                 # API keys and credentials (dotenv format)
@@ -39,19 +40,19 @@ agents, prompts, logs, and session data live here.
 
 ### Project-Local Configuration
 
-When in a trusted folder, Vibe also looks for project-local configuration:
-- `.vibe/config.toml` - Project-specific config (overrides user config)
-- `.vibe/hooks.toml` - Project-specific hooks (requires trusted folder)
-- `.vibe/skills/` - Project-specific skills
-- `.vibe/tools/` - Project-specific tools
-- `.vibe/agents/` - Project-specific agents
-- `.vibe/prompts/` - Project-specific prompts
+When in a trusted folder, Workplace CLI also looks for project-local configuration:
+- `.workplace/config.toml` - Project-specific config (overrides user config)
+- `.workplace/hooks.toml` - Project-specific hooks (requires trusted folder)
+- `.workplace/skills/` - Project-specific skills
+- `.workplace/tools/` - Project-specific tools
+- `.workplace/agents/` - Project-specific agents
+- `.workplace/prompts/` - Project-specific prompts
 - `.agents/skills/` - Standard agent skills directory
 
 ## Configuration (config.toml)
 
 The configuration file uses TOML format. Settings can also be overridden via
-environment variables with the `VIBE_` prefix (e.g., `VIBE_ACTIVE_MODEL=local`).
+environment variables with the `WORKPLACE_` prefix (e.g., `WORKPLACE_ACTIVE_MODEL=local`).
 
 ### Key Settings
 
@@ -150,7 +151,7 @@ allowlist = ["git", "npm", "python"]
 ```
 
 **Special case — `find` command:** Even if `find` is in the bash allowlist,
-Vibe detects `-exec`, `-execdir`, `-ok`, and `-okdir` predicates and will
+Workplace CLI detects `-exec`, `-execdir`, `-ok`, and `-okdir` predicates and will
 prompt for user permission before running the command.
 
 #### File Tool Permission Resolution
@@ -217,7 +218,7 @@ api_key_env = "MCP_API_KEY"
 ```toml
 [session_logging]
 enabled = true
-save_dir = ""                     # Defaults to ~/.vibe/logs/session
+save_dir = ""                     # Defaults to ~/.workplace-cli/logs/session
 session_prefix = "session"
 ```
 
@@ -231,14 +232,14 @@ session. The feature is **experimental** and must be enabled first:
 enable_experimental_hooks = true
 ```
 
-Or via the environment variable `VIBE_ENABLE_EXPERIMENTAL_HOOKS=true`.
+Or via the environment variable `WORKPLACE_ENABLE_EXPERIMENTAL_HOOKS=true`.
 
 #### Hook Configuration Files
 
 Hooks are defined in `hooks.toml` files (separate from `config.toml`):
 
-1. **User-level**: `~/.vibe/hooks.toml` (always loaded when hooks are enabled)
-2. **Project-level**: `<project>/.vibe/hooks.toml` (only loaded if the folder is trusted)
+1. **User-level**: `~/.workplace-cli/hooks.toml` (always loaded when hooks are enabled)
+2. **Project-level**: `<project>/.workplace/hooks.toml` (only loaded if the folder is trusted)
 
 Both files are merged; if a hook name appears in both, the first one wins and
 a warning is shown for the duplicate.
@@ -296,7 +297,7 @@ linter hook can output the lint errors, and the agent will try to resolve them.
 #### Example: Post-Turn Linting Hook
 
 ```toml
-# .vibe/hooks.toml
+# .workplace/hooks.toml
 [[hooks]]
 name = "ruff-check"
 type = "post_agent_turn"
@@ -319,19 +320,19 @@ Tool, skill, and agent names support three matching modes:
 ## CLI Parameters
 
 ```
-vibe [PROMPT]                       # Start interactive session with optional prompt
-vibe -p TEXT / --prompt TEXT         # Programmatic mode (auto-approve, one-shot, exit)
-vibe --agent NAME                   # Select agent profile
-vibe --workdir DIR                  # Change working directory
-vibe --trust                        # Trust cwd for this invocation only (not persisted)
-vibe -c / --continue                # Continue most recent session
-vibe --resume [SESSION_ID]          # Resume a specific session
-vibe -v / --version                 # Show version
-vibe --setup                        # Run onboarding/setup
-vibe --max-turns N                  # Max assistant turns (programmatic mode)
-vibe --max-price DOLLARS            # Max cost limit (programmatic mode)
-vibe --enabled-tools TOOL           # Enable specific tools (repeatable)
-vibe --output text|json|streaming   # Output format (programmatic mode)
+workplace [PROMPT]                       # Start interactive session with optional prompt
+workplace -p TEXT / --prompt TEXT         # Programmatic mode (auto-approve, one-shot, exit)
+workplace --agent NAME                   # Select agent profile
+workplace --workdir DIR                  # Change working directory
+workplace --trust                       # Trust cwd for this invocation only (not persisted)
+workplace -c / --continue                # Continue most recent session
+workplace --resume [SESSION_ID]          # Resume a specific session
+workplace -v / --version                 # Show version
+workplace --setup                        # Run onboarding/setup
+workplace --max-turns N                  # Max assistant turns (programmatic mode)
+workplace --max-price DOLLARS            # Max cost limit (programmatic mode)
+workplace --enabled-tools TOOL           # Enable specific tools (repeatable)
+workplace --output text|json|streaming   # Output format (programmatic mode)
 ```
 
 ## Built-in Agents
@@ -356,7 +357,7 @@ There are two kinds of agents:
 - **explore**: Read-only codebase exploration subagent (grep + read_file only).
   Spawned by the model, not selectable by the user.
 
-Custom agents are TOML files in `~/.vibe/agents/NAME.toml`.
+Custom agents are TOML files in `~/.workplace-cli/agents/NAME.toml`.
 
 ## Built-in Slash Commands
 
@@ -405,20 +406,20 @@ Detailed instructions for the model...
 ### Skill Search Order (first match wins)
 
 1. `skill_paths` from config.toml
-2. `.vibe/skills/` in trusted project directory
+2. `.workplace/skills/` in trusted project directory
 3. `.agents/skills/` in trusted project directory
-4. `~/.vibe/skills/` (user global)
+4. `~/.workplace-cli/skills/` (user global)
 
 ## Environment Variables
 
-- `VIBE_HOME` - Override the Vibe home directory (default: `~/.vibe`)
+- `WORKPLACE_HOME` - Override the home directory (default: `~/.workplace-cli`)
 - `MISTRAL_API_KEY` - API key for Mistral provider
-- `VIBE_ACTIVE_MODEL` - Override active model
-- `VIBE_*` - Any config field can be overridden with the `VIBE_` prefix
+- `WORKPLACE_ACTIVE_MODEL` - Override active model
+- `WORKPLACE_*` - Any config field can be overridden with the `WORKPLACE_` prefix
 
 ## API Keys (.env file)
 
-The `.env` file in VIBE_HOME stores API keys in dotenv format:
+The `.env` file in WORKPLACE_HOME stores API keys in dotenv format:
 
 ```
 MISTRAL_API_KEY=your-key-here
@@ -428,9 +429,9 @@ This file is loaded on startup and its values are injected into the environment.
 
 ## Trusted Folders
 
-Vibe uses a trust system to prevent executing project-local config from untrusted
-directories. The trust database is stored in `~/.vibe/trusted_folders.toml`.
-Project-local config (`.vibe/` directory) is only loaded when the current
+Workplace CLI uses a trust system to prevent executing project-local config from untrusted
+directories. The trust database is stored in `~/.workplace-cli/trusted_folders.toml`.
+Project-local config (`.workplace/` directory) is only loaded when the current
 directory is explicitly trusted.
 
 Interactive mode prompts to trust unknown folders. Programmatic mode
@@ -440,8 +441,8 @@ trust cwd for the current invocation only (not persisted).
 ## Sensitive Files — DO NOT READ OR EDIT
 
 NEVER read, display, or edit any of these files:
-- `~/.vibe/.env` (or `$VIBE_HOME/.env`) — contains API keys and secrets
-- Any `.env`, `.env.*` file in the project or VIBE_HOME
+- `~/.workplace-cli/.env` (or `$WORKPLACE_HOME/.env`) — contains API keys and secrets
+- Any `.env`, `.env.*` file in the project or WORKPLACE_HOME
 
 If the user asks to set or change an API key, instruct them to edit the `.env`
 file themselves. Do not offer to read it, write it, or display its contents.
@@ -449,20 +450,20 @@ Do not use tools (read_file, write_file, bash cat/echo, etc.) to access these fi
 
 ## How to Modify Configuration
 
-To help the user modify their Vibe configuration:
+To help the user modify their Workplace CLI configuration:
 
-1. **Read current config**: Read the file at `~/.vibe/config.toml` (or the path
-   from `VIBE_HOME` env var if set)
+1. **Read current config**: Read the file at `~/.workplace-cli/config.toml` (or the path
+   from `WORKPLACE_HOME` env var if set)
 2. **Create a backup**: Before any edit, copy the file to `config.toml.bak` in the
-   same directory (e.g. `cp ~/.vibe/config.toml ~/.vibe/config.toml.bak`). This
+   same directory (e.g. `cp ~/.workplace-cli/config.toml ~/.workplace-cli/config.toml.bak`). This
    applies to any config file you are about to modify (`config.toml`,
    `trusted_folders.toml`, agent TOML files, etc.)
 3. **Edit the TOML file**: Make changes using the search_replace or write_file tool
 4. **Reload**: The user can run `/reload` to apply changes without restarting
 
-For API keys, tell the user to edit `~/.vibe/.env` directly — never read or
+For API keys, tell the user to edit `~/.workplace-cli/.env` directly — never read or
 write that file yourself.
 
-For project-specific configuration, create/edit `.vibe/config.toml` in the
+For project-specific configuration, create/edit `.workplace/config.toml` in the
 project root (the folder must be trusted first).""",
 )

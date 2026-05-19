@@ -29,7 +29,7 @@ class Arguments:
 
 
 def parse_arguments() -> Arguments:
-    parser = argparse.ArgumentParser(description="Run Mistral Vibe in ACP mode")
+    parser = argparse.ArgumentParser(description="Run Workplace CLI in ACP mode")
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )

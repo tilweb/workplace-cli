@@ -106,7 +106,7 @@ from vibe.cli.textual_ui.windowing import (
 )
 from vibe.cli.update_notifier import (
     FileSystemUpdateCacheRepository,
-    PyPIUpdateGateway,
+    GitHubUpdateGateway,
     UpdateCacheRepository,
     UpdateError,
     UpdateGateway,
@@ -2916,14 +2916,14 @@ class VibeApp(App):  # noqa: PLR0904
 
         if self.config.enable_auto_update and await do_update():
             self.notify(
-                f"{update_message_prefix}\nVibe was updated successfully. Please restart to use the new version.",
+                f"{update_message_prefix}\nWorkplace CLI was updated successfully. Please restart to use the new version.",
                 title="Update successful",
                 severity="information",
                 timeout=float("inf"),
             )
             return
 
-        message = f"{update_message_prefix}\nPlease update mistral-vibe with your package manager"
+        message = f"{update_message_prefix}\nPlease update workplace-cli with your package manager"
 
         self.notify(
             message, title="Update available", severity="information", timeout=10
@@ -2955,7 +2955,7 @@ class VibeApp(App):  # noqa: PLR0904
             return
         with self.suspend():
             rprint(
-                "Mistral Vibe has been suspended. Run [bold cyan]fg[/bold cyan] to bring Mistral Vibe back."
+                "Workplace CLI has been suspended. Run [bold cyan]fg[/bold cyan] to bring Workplace CLI back."
             )
             os.kill(os.getpid(), signal.SIGTSTP)
 
@@ -2977,7 +2977,14 @@ def run_textual_ui(
 ) -> None:
     from vibe.cli.stderr_guard import stderr_guard
 
-    update_notifier = PyPIUpdateGateway(project_name="mistral-vibe")
+    # === ADACOR PATCH START: update-check source ===
+    # Upstream queries pypi.org/simple/mistral-vibe — that pointed Workplace-CLI
+    # (own version 1.0.0) at the Mistral release stream and "auto-updated" us
+    # to a Mistral wheel. Use our GitHub releases instead so the version
+    # compare and the upgrade commands (see UPDATE_COMMANDS) target the
+    # workplace-cli artifact users actually installed.
+    update_notifier = GitHubUpdateGateway(owner="tilweb", repository="workplace-cli")
+    # === ADACOR PATCH END ===
     update_cache_repository = FileSystemUpdateCacheRepository()
     plan_offer_gateway = HttpWhoAmIGateway()
 

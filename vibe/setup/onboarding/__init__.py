@@ -60,5 +60,5 @@ def run_onboarding(
             )
         case "completed":
             rprint(
-                '\nSetup complete 🎉. Run "vibe" to start using the Mistral Vibe CLI.\n'
+                '\nSetup complete 🎉. Run "workplace" to start using the Workplace CLI.\n'
             )

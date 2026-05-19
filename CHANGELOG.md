@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `app.tcss`: nicht-aufgeloeste CSS-Variable `$mistral_orange` durch `$workplace_purple` ersetzt (`border-remote`-Style)
 - Theme-Name `textual-ansi` ist in Textual 8.2.5+ umbenannt zu `ansi-dark` — startete sonst mit `InvalidThemeError`. Neuer Helper `vibe/cli/textual_ui/_theme_compat.py` waehlt zur Laufzeit das passende Theme (8.2.4 ✓ + 8.2.5+ ✓), mit Fallback auf `textual-dark`. Drei Aufruf-Stellen patched: `app.py`, `setup/onboarding/__init__.py`, `setup/trusted_folders/trust_folder_dialog.py`
 
+**Kritisch: Auto-Update auf falsche Quelle**
+- Upstream-Code fragte `pypi.org/simple/mistral-vibe` ab und verglich die Mistral-Releases (`2.9.x`) mit unserer eigenen Version (`1.0.0`). Folge: das auto-update zog ein Mistral-Wheel ueber unser installiertes `workplace-cli` und meldete „updated to 2.9.6 — please restart". Fix in `app.py`: `GitHubUpdateGateway(owner="tilweb", repository="workplace-cli")` statt PyPI; in `update.py`: `UPDATE_COMMANDS` referenziert jetzt `workplace-cli`; User-Agent + Banner-/Suspend-Texte gebrandet.
+
+**Branding-Politur**
+- Onboarding-Welcome zeigt jetzt „Workplace CLI" statt „Mistral Vibe"
+- Setup-complete-Hinweis verweist auf `workplace`-Binary statt `vibe`
+- Update-Banner und Suspend-Hinweis sagen „Workplace CLI"
+- ACP-Identifikation (`agent_info.name`/`title`) auf `@adacor/workplace-cli` + „Workplace CLI" — ACP-Clients (Zed etc.) sehen jetzt unsere Identitaet
+- ACP-Setup-Method id/description/label gebrandet
+- `vibe-acp --help` zeigt „Run Workplace CLI in ACP mode"
+- OpenTelemetry-Span-Namespace `mistral_vibe` → `workplace_cli` (Service-Name `mistral-vibe` → `workplace-cli`) — relevant fuer alle Otel-Konsumenten
+- Onboarding-API-Key-Screen verweist auf `github.com/tilweb/workplace-cli` statt Mistral-Repo
+- Self-Awareness-Skill (`vibe`) komplett auf Workplace CLI umgebrandet: alle Pfade (`~/.vibe/` → `~/.workplace-cli/`, `.vibe/` → `.workplace/`), Env-Vars (`VIBE_` → `WORKPLACE_`) und CLI-Beispiele (`vibe …` → `workplace …`) korrigiert. Mistral-Modell-IDs (`mistral-vibe-cli-latest` etc.) bleiben — das sind echte API-Endpoint-Namen.
+
 ### [1.0.0] — 2026-05-13
 
 Initialer Workplace-CLI-Release auf Basis Mistral Vibe v2.9.4.

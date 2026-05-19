@@ -24,9 +24,11 @@ from vibe.setup.onboarding.context import OnboardingContext
 PROVIDER_HELP = {
     "mistral": ("https://console.mistral.ai/codestral/cli", "Mistral AI Studio")
 }
+# === ADACOR PATCH: Doc-Link auf unser Repo ===
 CONFIG_DOCS_URL = (
-    "https://github.com/mistralai/mistral-vibe?tab=readme-ov-file#configuration"
+    "https://github.com/tilweb/workplace-cli?tab=readme-ov-file#konfiguration"
 )
+# === ADACOR PATCH END ===
 
 
 def _save_api_key_to_env_file(env_key: str, api_key: str) -> None:

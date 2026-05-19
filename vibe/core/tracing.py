@@ -16,8 +16,10 @@ if TYPE_CHECKING:
 
 from vibe.core.logger import logger
 
-VIBE_TRACER_NAME = "mistral_vibe"
-VIBE_AGENT_NAME = "mistral-vibe"
+# === ADACOR PATCH: OTel span namespace gebrandet ===
+VIBE_TRACER_NAME = "workplace_cli"
+VIBE_AGENT_NAME = "workplace-cli"
+# === ADACOR PATCH END ===
 
 
 def setup_tracing(config: VibeConfig) -> None:

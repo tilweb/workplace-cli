@@ -122,7 +122,9 @@ async def get_update_if_available(
     return UpdateAvailability(latest_version=update.latest_version, should_notify=True)
 
 
-UPDATE_COMMANDS = ["uv tool upgrade mistral-vibe", "brew upgrade mistral-vibe"]
+# === ADACOR PATCH START: upgrade commands for the workplace-cli artifact ===
+UPDATE_COMMANDS = ["uv tool upgrade workplace-cli", "brew upgrade workplace-cli"]
+# === ADACOR PATCH END ===
 
 
 async def do_update() -> bool:

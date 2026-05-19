@@ -248,16 +248,18 @@ class VibeAcpAgentLoop(AcpAgent):
             [
                 TerminalAuthMethod(
                     type="terminal",
-                    id="vibe-setup",
+                    # === ADACOR PATCH: Setup-Label gebrandet ===
+                    id="workplace-setup",
                     name="Register your API Key",
-                    description="Register your API Key inside Mistral Vibe",
+                    description="Register your API Key inside Workplace CLI",
                     field_meta={
                         "terminal-auth": {
                             "command": command,
                             "args": args,
-                            "label": "Mistral Vibe Setup",
+                            "label": "Workplace CLI Setup",
                         }
                     },
+                    # === ADACOR PATCH END ===
                 )
             ]
             if supports_terminal_auth
@@ -277,11 +279,13 @@ class VibeAcpAgentLoop(AcpAgent):
                 ),
             ),
             protocol_version=PROTOCOL_VERSION,
+            # === ADACOR PATCH: ACP-Identifikation auf Workplace CLI ===
             agent_info=Implementation(
-                name="@mistralai/mistral-vibe",
-                title="Mistral Vibe",
+                name="@adacor/workplace-cli",
+                title="Workplace CLI",
                 version=__version__,
             ),
+            # === ADACOR PATCH END ===
             auth_methods=auth_methods,
         )
         return response

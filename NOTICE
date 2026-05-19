@@ -13,6 +13,13 @@ Substantial modifications by Adacor Hosting GmbH:
     .vibe/ → .workplace/)
   - Environment-variable prefix VIBE_ → WORKPLACE_
 
+This product also includes the "frontend-design" skill from
+Anthropic's official skills repository
+(https://github.com/anthropics/skills), embedded as a built-in skill
+under `vibe/core/skills/builtins/frontend_design.py`.
+  Copyright 2025 Anthropic, PBC
+  Licensed under the Apache License, Version 2.0.
+
 The original Apache-2.0 License applies to all derived work.
 See LICENSE for the full license text. See CHANGELOG.md for details on
 Workplace-CLI-specific changes.

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Workplace CLI Releases
 
+### [Unreleased]
+
+**Bugfixes**
+- `app.tcss`: nicht-aufgeloeste CSS-Variable `$mistral_orange` durch `$workplace_purple` ersetzt (`border-remote`-Style)
+- Theme-Name `textual-ansi` ist in Textual 8.2.5+ umbenannt zu `ansi-dark` — startete sonst mit `InvalidThemeError`. Neuer Helper `vibe/cli/textual_ui/_theme_compat.py` waehlt zur Laufzeit das passende Theme (8.2.4 ✓ + 8.2.5+ ✓), mit Fallback auf `textual-dark`. Drei Aufruf-Stellen patched: `app.py`, `setup/onboarding/__init__.py`, `setup/trusted_folders/trust_folder_dialog.py`
+
 ### [1.0.0] — 2026-05-13
 
 Initialer Workplace-CLI-Release auf Basis Mistral Vibe v2.9.4.

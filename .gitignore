@@ -204,3 +204,4 @@ tests/playground/*
 *-profile.html
 *-profile.txt
 dist/
+snapshot_report.html

@@ -21,7 +21,11 @@ class OnboardingApp(App[str | None]):
         self._entrypoint_metadata = entrypoint_metadata
 
     def on_mount(self) -> None:
-        self.theme = "textual-ansi"
+        # === ADACOR PATCH: theme rename in textual 8.2.5+ ===
+        from vibe.cli.textual_ui._theme_compat import select_ansi_theme
+
+        self.theme = select_ansi_theme(self)
+        # === ADACOR PATCH END ===
 
         self.install_screen(WelcomeScreen(), "welcome")
         self.install_screen(

@@ -69,8 +69,11 @@ def load_config_or_exit(*, interactive: bool) -> VibeConfig:
     except MissingAPIKeyError as e:
         if not interactive:
             print(
-                f"Error: {e}. Set the environment variable (e.g. in ~/.vibe/.env "
-                "or your shell), or run `vibe --setup` once interactively.",
+                # === ADACOR PATCH: paths + binary name gebrandet ===
+                f"Error: {e}. Set the environment variable (e.g. in "
+                "~/.workplace-cli/.env or your shell), or run "
+                "`workplace --setup` once interactively.",
+                # === ADACOR PATCH END ===
                 file=sys.stderr,
             )
             sys.exit(1)

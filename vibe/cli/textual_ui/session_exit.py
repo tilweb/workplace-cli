@@ -21,5 +21,7 @@ def print_session_resume_message(session_id: str | None, stats: AgentStats) -> N
     print()
     print(format_session_usage(stats))
     print()
-    rprint("To continue this session, run: [bold dark_orange]vibe --continue[/]")
-    rprint(f"Or: [bold dark_orange]vibe --resume {session_id}[/]")
+    # === ADACOR PATCH: binary name workplace statt vibe ===
+    rprint("To continue this session, run: [bold dark_orange]workplace --continue[/]")
+    rprint(f"Or: [bold dark_orange]workplace --resume {session_id}[/]")
+    # === ADACOR PATCH END ===

@@ -17,7 +17,6 @@ This product also includes the following skills from Anthropic's official
 skills repository (https://github.com/anthropics/skills), embedded as
 built-ins under `vibe/core/skills/builtins/`:
   - frontend-design  (frontend_design.py)
-  - brand-guidelines (brand_guidelines.py)
   - canvas-design    (canvas_design.py — `canvas-fonts/` asset bundle
                       not embedded)
   - theme-factory    (theme_factory.py — includes the 10 themes/*.md

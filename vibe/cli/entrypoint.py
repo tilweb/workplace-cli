@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import os
 from pathlib import Path
 import sys
@@ -18,7 +19,9 @@ from vibe.setup.trusted_folders.trust_folder_dialog import (
 
 
 def parse_arguments() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="KI Workplace CLI - Coding Agent powered by Adacor AI")
+    parser = argparse.ArgumentParser(
+        description="KI Workplace CLI - Coding Agent powered by Adacor AI"
+    )
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
@@ -77,6 +80,13 @@ def parse_arguments() -> argparse.Namespace:
         "or custom from ~/.workplace-cli/agents/NAME.toml)",
     )
     parser.add_argument("--setup", action="store_true", help="Setup API key and exit")
+    parser.add_argument(
+        "--check-update",
+        action="store_true",
+        dest="check_update",
+        help="Check whether a newer Workplace CLI release is available and exit. "
+        "Always runs, even with WORKPLACE_NO_UPDATE_CHECK set.",
+    )
     parser.add_argument(
         "--workdir",
         type=Path,
@@ -141,8 +151,39 @@ def check_and_resolve_trusted_folder(cwd: Path) -> None:
         trusted_folders_manager.add_untrusted(cwd)
 
 
+def run_check_update() -> None:
+    from vibe.cli.update_notifier import (
+        UpdateError,
+        build_update_gateway,
+        check_for_update_now,
+    )
+    from vibe.cli.update_notifier.update import UPDATE_COMMANDS
+
+    try:
+        result = asyncio.run(check_for_update_now(build_update_gateway(), __version__))
+    except UpdateError as error:
+        rprint(f"[yellow]{error.message}[/]")
+        sys.exit(1)
+
+    if not result.is_update_available:
+        rprint(f"[green]Workplace CLI {result.current_version} ist aktuell.[/]")
+        return
+
+    commands = "\n".join(f"    {command}" for command in UPDATE_COMMANDS)
+    rprint(
+        f"[bold]Update verfügbar:[/] Workplace CLI {result.latest_version} "
+        f"(du nutzt {result.current_version}).\n\n"
+        f"  Update per:\n{commands}\n\n"
+        "  Changelog: https://github.com/tilweb/workplace-cli/releases"
+    )
+
+
 def main() -> None:
     args = parse_arguments()
+
+    if args.check_update:
+        run_check_update()
+        return
 
     if args.workdir:
         workdir = args.workdir.expanduser().resolve()

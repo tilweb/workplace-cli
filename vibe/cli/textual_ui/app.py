@@ -106,14 +106,15 @@ from vibe.cli.textual_ui.windowing import (
 )
 from vibe.cli.update_notifier import (
     FileSystemUpdateCacheRepository,
-    GitHubUpdateGateway,
     UpdateCacheRepository,
     UpdateError,
     UpdateGateway,
+    build_update_gateway,
     get_update_if_available,
     load_whats_new_content,
     mark_version_as_seen,
     should_show_whats_new,
+    update_checks_disabled,
 )
 from vibe.cli.update_notifier.update import do_update
 from vibe.cli.voice_manager import VoiceManager, VoiceManagerPort
@@ -2224,9 +2225,7 @@ class VibeApp(App):  # noqa: PLR0904
                 provider_order.append(model.provider)
                 seen.add(model.provider)
 
-        discovered_providers = {
-            p.name for p in self.config.providers if p.discovered
-        }
+        discovered_providers = {p.name for p in self.config.providers if p.discovered}
         grouped: dict[str, list[ModelEntry]] = {name: [] for name in provider_order}
         for model in self.config.models:
             is_discovered = model.provider in discovered_providers
@@ -3002,6 +3001,10 @@ class VibeApp(App):  # noqa: PLR0904
         if self._update_notifier is None or not self.config.enable_update_checks:
             return
 
+        # === ADACOR PATCH: WORKPLACE_NO_UPDATE_CHECK env opt-out ===
+        if update_checks_disabled():
+            return
+
         asyncio.create_task(self._check_update(), name="version-update-check")
 
     async def _check_update(self) -> None:
@@ -3102,7 +3105,7 @@ def run_textual_ui(
     # to a Mistral wheel. Use our GitHub releases instead so the version
     # compare and the upgrade commands (see UPDATE_COMMANDS) target the
     # workplace-cli artifact users actually installed.
-    update_notifier = GitHubUpdateGateway(owner="tilweb", repository="workplace-cli")
+    update_notifier = build_update_gateway()
     # === ADACOR PATCH END ===
     update_cache_repository = FileSystemUpdateCacheRepository()
     plan_offer_gateway = HttpWhoAmIGateway()

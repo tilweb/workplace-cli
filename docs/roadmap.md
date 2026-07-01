@@ -182,6 +182,17 @@ models:
 
 ## 3. P3 — Update-Check + `workplace --check-update`
 
+> **Status (2026-07-01): umgesetzt.** Der automatische Check beim TUI-Start existierte
+> bereits (`app.py::_check_update`, GitHub-Releases von `tilweb/workplace-cli`, 24h-Cache,
+> `do_update()` mit brew/uv). Ergänzt: explizites **`workplace --check-update`** (synchron,
+> Terminal-Output verfügbar/aktuell/Fehler, ignoriert den Cache) und Env-Opt-out
+> **`WORKPLACE_NO_UPDATE_CHECK`** für den automatischen Check. Neue Bausteine:
+> `check_for_update_now`, `build_update_gateway`, `update_checks_disabled` in
+> `vibe/cli/update_notifier/update.py`; Flag-Handling in `entrypoint.py`; Tests in
+> `tests/update_notifier/test_check_for_update_now.py`. Abweichung vom Plan unten: keine
+> separate `update_check.py`/`last-update-check.json` — das vorhandene `update_notifier`-
+> Package (cache.toml) wird wiederverwendet statt dupliziert.
+
 ### Ziel
 
 CLI prüft beim Start (oder explizit per `workplace --check-update`), ob es eine neuere Version gibt, und informiert den User mit Install-Befehl.

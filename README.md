@@ -60,8 +60,17 @@ Discovered Modelle sind im Picker mit `· live` markiert. Die Liste wird in `~/.
 **Env-Vars** (Auswahl, alle mit `WORKPLACE_`-Prefix):
 - `WORKPLACE_TELEMETRY` — `off` (Default), `local`, `remote`. Bei `local`: JSONL-Append in `~/.config/workplace/usage.jsonl`. Telemetrie geht **niemals** an Mistral.
 - `WORKPLACE_TELEMETRY_URL` — bei `remote` der Endpoint. Ohne Default.
+- `WORKPLACE_NO_UPDATE_CHECK` — auf `1`/`true` gesetzt schaltet den automatischen Update-Check beim Start ab (`workplace --check-update` läuft trotzdem).
 
 ## Update
+
+Beim Start prüft Workplace CLI einmal täglich im Hintergrund, ob ein neueres Release vorliegt, und blendet ggf. einen dezenten Hinweis ein. Explizit prüfen:
+
+```sh
+workplace --check-update
+```
+
+Aktualisieren:
 
 ```sh
 # Homebrew
@@ -70,6 +79,8 @@ brew update && brew upgrade workplace-cli
 # uv tool
 uv tool upgrade workplace-cli
 ```
+
+Den automatischen Check abschalten: `export WORKPLACE_NO_UPDATE_CHECK=1`.
 
 ## Beziehung zu Mistral Vibe
 

@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Update-Check: `workplace --check-update` (P3)**
+- Neues Flag `workplace --check-update` prueft synchron gegen die GitHub-Releases von `tilweb/workplace-cli` und beendet sich mit Terminal-Ausgabe (verfuegbar / aktuell / Fehler); umgeht den 24h-Cache, damit der explizite Check immer frisch ist
+- Env-Opt-out `WORKPLACE_NO_UPDATE_CHECK=1` schaltet den automatischen Start-Check ab; das explizite Flag laeuft trotzdem
+- Wiederverwendung des bestehenden `update_notifier`-Packages statt eigener `update_check.py`: neu `check_for_update_now`, `build_update_gateway`, `update_checks_disabled` in `vibe/cli/update_notifier/update.py`; Flag-Handling in `vibe/cli/entrypoint.py`; Env-Gate in `app.py::_schedule_update_notification`; Builtin-`vibe`-Skill um `--check-update` ergaenzt; Tests in `tests/update_notifier/test_check_for_update_now.py`
+
 **Dynamische Modell-Auswahl**
 - `/model` listet jetzt Provider-gruppiert: Adacor-Modelle werden zur Laufzeit aus `api.adacor.ai/chat/privateai/v1/models` geholt (kein Auth noetig fuer den Endpoint), Embedding-/Transcribe-Modelle werden gefiltert
 - Ollama wird auto-detected: wenn `http://localhost:11434/v1/models` antwortet, taucht der Provider mit allen lokal installierten Modellen im Picker auf — ohne Config-Edit

@@ -328,6 +328,7 @@ workplace --trust                       # Trust cwd for this invocation only (no
 workplace -c / --continue                # Continue most recent session
 workplace --resume [SESSION_ID]          # Resume a specific session
 workplace -v / --version                 # Show version
+workplace --check-update                 # Check for a newer release and exit
 workplace --setup                        # Run onboarding/setup
 workplace --max-turns N                  # Max assistant turns (programmatic mode)
 workplace --max-price DOLLARS            # Max cost limit (programmatic mode)

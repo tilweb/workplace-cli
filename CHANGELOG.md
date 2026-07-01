@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Env-Opt-out `WORKPLACE_NO_UPDATE_CHECK=1` schaltet den automatischen Start-Check ab; das explizite Flag laeuft trotzdem
 - Wiederverwendung des bestehenden `update_notifier`-Packages statt eigener `update_check.py`: neu `check_for_update_now`, `build_update_gateway`, `update_checks_disabled` in `vibe/cli/update_notifier/update.py`; Flag-Handling in `vibe/cli/entrypoint.py`; Env-Gate in `app.py::_schedule_update_notification`; Builtin-`vibe`-Skill um `--check-update` ergaenzt; Tests in `tests/update_notifier/test_check_for_update_now.py`
 
+**Eigene Provider dokumentiert + Pfad-Korrektur (P2)**
+- README-Abschnitt „Eigene Provider / Modelle hinzufuegen": eigene OpenAI-kompatible Endpoints gehen per `config.toml` (`[[providers]]`/`[[models]]`) — kein Source-Fork, kein YAML-Loader noetig (Discovery + TOML decken den User-Value bereits ab; P2-YAML in der Roadmap auf Doku reduziert)
+- Faktische Pfad-Korrektur in README: User-Config liegt in `~/.workplace-cli/config.toml` (nicht `~/.config/workplace/`); API-Keys optional in `~/.workplace-cli/.env`
+
 **Dynamische Modell-Auswahl**
 - `/model` listet jetzt Provider-gruppiert: Adacor-Modelle werden zur Laufzeit aus `api.adacor.ai/chat/privateai/v1/models` geholt (kein Auth noetig fuer den Endpoint), Embedding-/Transcribe-Modelle werden gefiltert
 - Ollama wird auto-detected: wenn `http://localhost:11434/v1/models` antwortet, taucht der Provider mit allen lokal installierten Modellen im Picker auf — ohne Config-Edit

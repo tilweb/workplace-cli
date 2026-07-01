@@ -48,13 +48,31 @@ Beim Aufruf von `/model` listet die TUI Modelle gruppiert nach Provider:
 
 Discovered Modelle sind im Picker mit `· live` markiert. Die Liste wird in `~/.workplace-cli/models-cache.json` gecached (TTL 1h, override via `WORKPLACE_MODEL_CACHE_TTL_SEC=<sec>`); beim Öffnen von `/model` läuft im Hintergrund ein Refresh. Nur das ausgewählte Modell-Alias wandert nach `config.toml` — die Modell-Liste selbst nicht.
 
+### Eigene Provider / Modelle hinzufügen
+
+Adacor-Modelle (live von `api.adacor.ai`) und ein lokal laufender Ollama werden automatisch entdeckt — dafür ist **kein** Config-Edit nötig. Möchtest du einen **anderen** OpenAI-kompatiblen Endpoint anbinden (LM Studio, ein internes LLM, ein Remote-Gateway), trägst du ihn in `~/.workplace-cli/config.toml` ein:
+
+```toml
+[[providers]]
+name = "my-internal-llm"
+api_base = "https://llm.internal.adacor.de/v1"
+api_key_env_var = "ADACOR_INTERNAL_KEY"   # ENV-Var, aus der der Key gelesen wird ("" = kein Key)
+
+[[models]]
+name = "internal-coder-7b"                 # Modell-ID beim Provider
+provider = "my-internal-llm"               # muss zu providers[].name passen
+alias = "internal"                         # Name im /model-Picker; default = name
+```
+
+Nach dem Neustart erscheint `internal` in `/model` und als `--agent`-Ziel. `providers`/`models` werden zu den Builtins (Adacor, Mistral, llamacpp) **hinzugefügt** — bestehende Provider werden nicht überschrieben. Für lokale Endpoints ohne Auth lässt du `api_key_env_var = ""`.
+
 ## Konfiguration
 
 | Pfad | Inhalt |
 |---|---|
-| `~/.config/workplace/config.toml` | User-Config (Modell, Theme, …) |
-| `~/.config/workplace/credentials.json` | API-Keys (alternativ zur ENV-Var) |
-| `.workplace/` im Projekt | Pro-Projekt-Tools, Skills, Agents |
+| `~/.workplace-cli/config.toml` | User-Config (Modell, Theme, eigene Provider/Modelle, …) |
+| `~/.workplace-cli/.env` | ENV-Vars / API-Keys (alternativ zur Shell-ENV-Var) |
+| `.workplace/config.toml` im Projekt | Pro-Projekt-Config, Tools, Skills, Agents |
 | `.agents/` im Projekt | Pro-Projekt-Agents (Standard von vielen Repos) |
 
 **Env-Vars** (Auswahl, alle mit `WORKPLACE_`-Prefix):

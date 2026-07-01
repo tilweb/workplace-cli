@@ -57,6 +57,17 @@ Wenn der Warning `Failed to fix install linkage … rpds.cpython-312-darwin.so` 
 
 ## 2. P2 — Provider/Model-Config aus Source raus in `~/.config/workplace/providers.yaml`
 
+> **Status (2026-07-01): auf Doku reduziert, kein YAML-Loader.** Der ursprüngliche
+> User-Value („eigene Provider ohne Source-Fork") ist inzwischen abgedeckt: (1) die
+> Runtime-**Model-Discovery** (`vibe/core/llm/model_discovery.py`) holt Adacor-Modelle
+> live und probt Ollama automatisch; (2) eigene Provider/Modelle lassen sich bereits
+> per `config.toml` (`[[providers]]`/`[[models]]`, TOML-Felder auf `VibeConfig`)
+> ergänzen — ohne Code. Damit bliebe von P2 nur die Maintainer-Merge-Konflikt-Reduktion
+> von ~30 klar markierten Zeilen — das rechtfertigt eine zweite Config-Quelle + Loader +
+> Tests nicht. **Umgesetzt:** README-Abschnitt „Eigene Provider / Modelle hinzufügen"
+> + korrigierter `config.toml`-Pfad (`~/.workplace-cli/`, nicht `~/.config/workplace/`).
+> Der folgende YAML-Plan bleibt als Referenz, falls sich die Abwägung später ändert.
+
 ### Ziel
 
 Provider/Modell-Definitionen aus `vibe/core/config/_settings.py` als YAML-Config ausgliedern, sodass User eigene Provider (Ollama, LM Studio, eigene Endpoints) hinzufügen können **ohne Source-Code anzufassen**. Reduziert Konflikt-Surface bei Upstream-Merges drastisch.

@@ -16,7 +16,7 @@ troubleshoot their Workplace CLI installation.
 ## WORKPLACE_HOME
 
 The user's Workplace CLI home directory defaults to `~/.workplace-cli` but can be
-overridden via the `WORKPLACE_HOME` environment variable (or the legacy `VIBE_HOME`). All user-level configuration, skills, tools,
+overridden via the `WORKPLACE_HOME` environment variable. All user-level configuration, skills, tools,
 agents, prompts, logs, and session data live here.
 
 ### Directory Structure

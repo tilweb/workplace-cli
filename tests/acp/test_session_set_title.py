@@ -244,7 +244,7 @@ class TestSessionSetTitle:
                 "session_prefix": "session",
             },
         }
-        monkeypatch.setenv("VIBE_HOME", str(config_dir))
+        monkeypatch.setenv("WORKPLACE_HOME", str(config_dir))
         (config_dir / "config.toml").write_text(tomli_w.dumps(config), encoding="utf-8")
         monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
 

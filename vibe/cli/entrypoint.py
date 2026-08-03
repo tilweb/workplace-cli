@@ -11,6 +11,7 @@ from rich import print as rprint
 from vibe import __version__
 from vibe.core.agents.models import BuiltinAgentName
 from vibe.core.config.harness_files import init_harness_files_manager
+from vibe.core.paths import VIBE_HOME
 from vibe.core.trusted_folders import find_trustable_files, trusted_folders_manager
 from vibe.setup.trusted_folders.trust_folder_dialog import (
     TrustDialogQuitException,
@@ -178,8 +179,21 @@ def run_check_update() -> None:
     )
 
 
+def warn_if_legacy_vibe_home() -> None:
+    # === ADACOR PATCH: VIBE_HOME wird nicht mehr honoriert (siehe _vibe_home) ===
+    if os.getenv("VIBE_HOME") and not os.getenv("WORKPLACE_HOME"):
+        rprint(
+            "[yellow]Hinweis: VIBE_HOME wird von Workplace CLI ignoriert. "
+            "Für ein abweichendes Home-Verzeichnis WORKPLACE_HOME setzen "
+            f"(aktuell: {VIBE_HOME.path}).[/]",
+            file=sys.stderr,
+        )
+
+
 def main() -> None:
     args = parse_arguments()
+
+    warn_if_legacy_vibe_home()
 
     if args.check_update:
         run_check_update()

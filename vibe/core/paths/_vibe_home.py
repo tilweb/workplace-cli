@@ -20,11 +20,16 @@ _DEFAULT_VIBE_HOME = Path.home() / ".workplace-cli"
 
 
 def _get_vibe_home() -> Path:
-    if vibe_home := os.getenv("WORKPLACE_HOME"):
-        return Path(vibe_home).expanduser().resolve()
-    if vibe_home := os.getenv("VIBE_HOME"):
-        return Path(vibe_home).expanduser().resolve()
+    # === ADACOR PATCH: nur WORKPLACE_HOME honorieren ===
+    # Der Upstream-`VIBE_HOME`-Env-Fallback wird bewusst NICHT gelesen: Ein
+    # Ex-Mistral-Vibe-User hat evtl. noch `VIBE_HOME` (z.B. auf ~/.vibe)
+    # gesetzt. Würde Workplace CLI das still übernehmen, landeten Config und
+    # Adacor-Key im falschen (Mistral-Ära-)Verzeichnis, während alle Meldungen
+    # ~/.workplace-cli/ anzeigen. Custom-Home nur noch via WORKPLACE_HOME.
+    if workplace_home := os.getenv("WORKPLACE_HOME"):
+        return Path(workplace_home).expanduser().resolve()
     return _DEFAULT_VIBE_HOME
+    # === ADACOR PATCH END ===
 
 
 VIBE_HOME = GlobalPath(_get_vibe_home)

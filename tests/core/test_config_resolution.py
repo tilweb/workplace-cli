@@ -137,12 +137,19 @@ class TestResolveConfigFile:
         mgr = get_harness_files_manager()
         assert mgr.config_file == VIBE_HOME.path / "config.toml"
 
-    def test_respects_vibe_home_env_var(
+    def test_respects_workplace_home_env_var(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         assert VIBE_HOME.path != tmp_path
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         assert VIBE_HOME.path == tmp_path
+
+    def test_ignores_legacy_vibe_home_env_var(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.delenv("WORKPLACE_HOME", raising=False)
+        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        assert VIBE_HOME.path != tmp_path
 
     def test_returns_none_when_no_sources(self) -> None:
         mgr = HarnessFilesManager(sources=())
@@ -244,7 +251,7 @@ class TestMigrateLeavesFindInBashAllowlist:
     def test_keeps_find_in_config_file(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {"tools": {"bash": {"allowlist": ["echo", "ls"]}}}
         with config_file.open("wb") as f:
@@ -261,7 +268,7 @@ class TestMigrateLeavesFindInBashAllowlist:
     def test_noop_when_find_already_present(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {"tools": {"bash": {"allowlist": ["echo", "find", "ls"]}}}
         with config_file.open("wb") as f:
@@ -278,7 +285,7 @@ class TestMigrateLeavesFindInBashAllowlist:
     def test_noop_when_no_bash_tools_section(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {"active_model": "test"}
         with config_file.open("wb") as f:
@@ -297,7 +304,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_updates_alias_temperature_and_thinking_for_default_model(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "models": [
@@ -328,7 +335,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_updates_active_model_when_devstral_2(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "active_model": "devstral-2",
@@ -354,7 +361,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_adds_temperature_and_thinking_when_missing(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "models": [
@@ -383,7 +390,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_skips_model_with_customized_alias(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "models": [
@@ -412,7 +419,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_does_not_touch_other_models(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "models": [
@@ -446,7 +453,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_noop_when_no_models_section(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {"theme": "dark"}
         with config_file.open("wb") as f:
@@ -463,7 +470,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_idempotent_when_already_migrated(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "active_model": "mistral-medium-3.5",
@@ -499,7 +506,7 @@ class TestMigrateMistralVibeCliLatestDefaults:
     def test_migrates_model_and_active_model_together(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         data = {
             "active_model": "devstral-2",
@@ -609,7 +616,7 @@ class TestMistralBrowserAuthConfig:
     def test_legacy_explicit_mistral_provider_backfills_browser_auth_urls_without_changing_backend(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         with config_file.open("wb") as f:
             tomli_w.dump(
@@ -784,7 +791,7 @@ class TestOnboardingContextResolution:
     def test_load_prefers_explicit_overrides_over_toml_and_env(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         with config_file.open("wb") as file:
             tomli_w.dump(
@@ -850,7 +857,7 @@ class TestOnboardingContextResolution:
     def test_load_preserves_explicit_overrides_when_onboarding_toml_is_invalid(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         config_file.write_text("invalid = [", encoding="utf-8")
 
@@ -869,7 +876,7 @@ class TestOnboardingContextResolution:
     def test_load_preserves_explicit_provider_and_model_overrides_when_toml_is_invalid(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         config_file.write_text("invalid = [", encoding="utf-8")
 
@@ -887,7 +894,7 @@ class TestOnboardingContextResolution:
     def test_load_preserves_explicit_provider_override_when_toml_is_invalid(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         config_file.write_text("invalid = [", encoding="utf-8")
 
@@ -1009,7 +1016,7 @@ class TestOnboardingContextResolution:
     def test_load_falls_back_when_onboarding_toml_is_invalid(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.setenv("VIBE_HOME", str(tmp_path))
+        monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
         config_file = tmp_path / "config.toml"
         config_file.write_text("invalid = [", encoding="utf-8")
 

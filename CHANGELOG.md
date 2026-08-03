@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Kritisch: frischer Install crasht durch `mcp 2.0.0`**
+- `pyproject.toml` hatte `mcp>=1.14.0` ohne Obergrenze. Ein frischer `uv tool install git+…/workplace-cli` (der README-Weg) zieht `mcp 2.0.0`, wo `streamablehttp_client` umbenannt wurde → `ImportError` beim Start, CLI unbrauchbar. Von der vollen Test-Suite (`test_cli_tui_fresh_install`) aufgedeckt. Gecappt auf `mcp>=1.14.0,<2`.
+
+**Rebrand-Miss: vergessene `.vibe`-Pfade im Code korrigiert**
+- `harness_files/_harness_manager.py`: Projekt-Hooks aus `.workplace/hooks.toml` statt `.vibe/hooks.toml` (wurden bisher nie geladen; altes `.vibe/hooks.toml` wäre in trusted folders ausgeführt worden).
+- `acp/acp_logger.py`: ACP-Log-Verzeichnis aus `VIBE_HOME` (`~/.workplace-cli/logs/acp`) statt hart `~/.vibe/…` (respektiert jetzt `WORKPLACE_HOME`).
+- `acp/acp_agent_loop.py`: `/proxy`-Meldungen verweisen auf `~/.workplace-cli/.env` statt `~/.vibe/.env`.
+- `tools/builtins/grep.py`: Default-Ignore-Datei `.workplaceignore` statt `.vibeignore`.
+
 **Home-Verzeichnis: `VIBE_HOME`-Hijack entschärft (Audit #2)**
 - `VIBE_HOME`-Env-Var wird nicht mehr honoriert (`_vibe_home.py`): ein Ex-Mistral-Vibe-User mit gesetztem `VIBE_HOME` haette sonst Config + Adacor-Key still ins alte `~/.vibe/`-Verzeichnis geschrieben. Custom-Home nur noch via `WORKPLACE_HOME`; einmaliger stderr-Hinweis beim Start, falls `VIBE_HOME` gesetzt ist. Tests von `VIBE_HOME` auf `WORKPLACE_HOME` umgestellt, Skill-Doku korrigiert.
 

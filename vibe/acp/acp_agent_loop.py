@@ -1343,13 +1343,13 @@ class VibeAcpAgentLoop(AcpAgent):
                 if value is not None:
                     set_proxy_var(key, value)
                     message = (
-                        f"Set `{key}={value}` in ~/.vibe/.env\n\n"
+                        f"Set `{key}={value}` in ~/.workplace-cli/.env\n\n"
                         "Please start a new chat for changes to take effect."
                     )
                 else:
                     unset_proxy_var(key)
                     message = (
-                        f"Removed `{key}` from ~/.vibe/.env\n\n"
+                        f"Removed `{key}` from ~/.workplace-cli/.env\n\n"
                         "Please start a new chat for changes to take effect."
                     )
         except ProxySetupError as e:

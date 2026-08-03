@@ -3,7 +3,7 @@ revision = 3
 requires-python = ">=3.12"
 
 [options]
-exclude-newer = "2026-05-06T07:50:05.025773Z"
+exclude-newer = "2026-07-27T20:22:50.762642Z"
 exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
@@ -2251,7 +2251,7 @@ requires-dist = [
     { name = "jsonpatch", specifier = ">=1.33" },
     { name = "keyring", specifier = ">=25.6.0" },
     { name = "markdownify", specifier = ">=1.2.2" },
-    { name = "mcp", specifier = ">=1.14.0" },
+    { name = "mcp", specifier = ">=1.14.0,<2" },
     { name = "mistralai", specifier = "==2.4.4" },
     { name = "opentelemetry-api", specifier = ">=1.39.1" },
     { name = "opentelemetry-exporter-otlp-proto-http", specifier = ">=1.39.1" },

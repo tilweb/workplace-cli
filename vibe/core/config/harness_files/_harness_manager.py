@@ -59,7 +59,7 @@ class HarnessFilesManager:
             hook_files.append(VIBE_HOME.path / "hooks.toml")
         workdir = self.trusted_workdir
         if workdir is not None:
-            hook_files.append(workdir / ".vibe" / "hooks.toml")
+            hook_files.append(workdir / ".workplace" / "hooks.toml")
         return hook_files
 
     @property

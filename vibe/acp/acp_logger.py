@@ -5,16 +5,18 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-from pathlib import Path
 import re
 from typing import TYPE_CHECKING
 
 from cachetools import TTLCache
 
+from vibe.core.paths import VIBE_HOME
+
 if TYPE_CHECKING:
     from acp.connection import StreamEvent
 
-ACP_LOG_DIR = Path.home() / ".vibe" / "logs" / "acp"
+# === ADACOR PATCH: Home aus VIBE_HOME (~/.workplace-cli) statt hart ~/.vibe ===
+ACP_LOG_DIR = VIBE_HOME.path / "logs" / "acp"
 ACP_LOG_FILE = ACP_LOG_DIR / "messages.jsonl"
 MAX_LOG_SIZE_BYTES = 1_000_000
 BACKUP_COUNT = 3

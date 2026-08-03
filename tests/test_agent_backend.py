@@ -342,6 +342,7 @@ async def test_auto_compact_emits_summary_recount_and_next_turn_metadata() -> No
         [mock_llm_chunk(content="<final>")],
     ])
     config = build_test_vibe_config(
+        active_model="devstral-small",
         models=make_test_models(auto_compact_threshold=1),
         providers=[
             ProviderConfig(

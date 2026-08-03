@@ -13,6 +13,7 @@ from tests.mock.utils import mock_llm_chunk
 from tests.stubs.fake_backend import FakeBackend
 from vibe.core.agents.models import BuiltinAgentName
 from vibe.core.config import (
+    DEFAULT_PROVIDERS,
     ModelConfig,
     ProviderConfig,
     SessionLoggingConfig,
@@ -511,7 +512,10 @@ class TestAutoCompactIntegration:
             [mock_llm_chunk(content="<summary>")],
             [mock_llm_chunk(content="<final>")],
         ])
-        cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+        cfg = build_test_vibe_config(
+            models=make_test_models(auto_compact_threshold=1),
+            providers=DEFAULT_PROVIDERS,
+        )
         agent = build_test_agent_loop(
             config=cfg, message_observer=observer, backend=backend
         )

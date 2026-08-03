@@ -82,7 +82,7 @@ async def test_arrow_navigation_updates_selected_suggestion(vibe_app: VibeApp) -
 
         ensure_selected_command(popup, "/config")
         await pilot.press("down")
-        ensure_selected_command(popup, "/clear")
+        ensure_selected_command(popup, "/canvas-design")
         await pilot.press("up")
         ensure_selected_command(popup, "/config")
 
@@ -121,7 +121,7 @@ async def test_pressing_enter_submits_selected_command_and_hides_popup(
         slash_used = [
             e
             for e in telemetry_events
-            if e.get("event_name") == "vibe.slash_command_used"
+            if e.get("event_name") == "workplace.slash_command_used"
         ]
         assert any(
             e.get("properties", {}).get("command") == "help"

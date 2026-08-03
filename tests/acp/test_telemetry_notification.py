@@ -65,7 +65,9 @@ class TestTelemetryNotification:
         )
 
         at_mention_events = [
-            e for e in telemetry_events if e["event_name"] == "vibe.at_mention_inserted"
+            e
+            for e in telemetry_events
+            if e["event_name"] == "workplace.at_mention_inserted"
         ]
         assert len(at_mention_events) == 1
         props = at_mention_events[0]["properties"]

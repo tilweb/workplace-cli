@@ -89,7 +89,7 @@ class TestResolveConfigFile:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         monkeypatch.chdir(tmp_path)
-        local_config_dir = tmp_path / ".vibe"
+        local_config_dir = tmp_path / ".workplace"
         local_config_dir.mkdir()
         local_config = local_config_dir / "config.toml"
         local_config.write_text('active_model = "test"', encoding="utf-8")
@@ -111,7 +111,7 @@ class TestResolveConfigFile:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         monkeypatch.chdir(tmp_path)
-        local_config_dir = tmp_path / ".vibe"
+        local_config_dir = tmp_path / ".workplace"
         local_config_dir.mkdir()
         local_config = local_config_dir / "config.toml"
         local_config.write_text('active_model = "test"', encoding="utf-8")
@@ -128,7 +128,7 @@ class TestResolveConfigFile:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         # Ensure no local config exists
-        assert not (tmp_path / ".vibe" / "config.toml").exists()
+        assert not (tmp_path / ".workplace" / "config.toml").exists()
 
         reset_harness_files_manager()
         init_harness_files_manager("user", "project")
@@ -1002,7 +1002,7 @@ class TestOnboardingContextResolution:
             models=[_custom_model_payload()],
         )
 
-        assert context.provider.name == "mistral"
+        assert context.provider.name == "adacor"
 
     def test_load_falls_back_when_no_valid_provider_model_pair_exists(self) -> None:
         context = OnboardingContext.load(
@@ -1011,7 +1011,7 @@ class TestOnboardingContextResolution:
             models=[{"name": "broken-model", "alias": "broken-model"}],
         )
 
-        assert context.provider.name == "mistral"
+        assert context.provider.name == "adacor"
 
     def test_load_falls_back_when_onboarding_toml_is_invalid(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -1025,7 +1025,7 @@ class TestOnboardingContextResolution:
 
         context = OnboardingContext.load()
 
-        assert context.provider.name == "mistral"
+        assert context.provider.name == "adacor"
 
     def test_load_falls_back_when_onboarding_env_payload_is_invalid(
         self, monkeypatch: pytest.MonkeyPatch
@@ -1035,7 +1035,7 @@ class TestOnboardingContextResolution:
 
         context = OnboardingContext.load()
 
-        assert context.provider.name == "mistral"
+        assert context.provider.name == "adacor"
 
 
 class TestCompactionModel:

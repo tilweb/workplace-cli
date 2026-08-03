@@ -26,8 +26,8 @@ def test_print_session_resume_message_prints_resume_commands_and_usage(
         "\n"
         "Total tokens used this session: input=14,867 output=6 (total=14,873)\n"
         "\n"
-        "To continue this session, run: vibe --continue\n"
-        "Or: vibe --resume 12345678-1234-1234-1234-123456789abc\n"
+        "To continue this session, run: workplace --continue\n"
+        "Or: workplace --resume 12345678-1234-1234-1234-123456789abc\n"
     )
 
 
@@ -40,6 +40,6 @@ def test_print_session_resume_message_prints_zero_usage_for_resumed_run_without_
         "\n"
         "Total tokens used this session: input=0 output=0 (total=0)\n"
         "\n"
-        "To continue this session, run: vibe --continue\n"
-        "Or: vibe --resume 12345678\n"
+        "To continue this session, run: workplace --continue\n"
+        "Or: workplace --resume 12345678\n"
     )

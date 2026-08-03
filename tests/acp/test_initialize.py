@@ -13,6 +13,7 @@ from acp.schema import (
 )
 import pytest
 
+from vibe import __version__
 from vibe.acp.acp_agent_loop import VibeAcpAgentLoop
 
 
@@ -34,7 +35,7 @@ class TestACPInitialize:
             ),
         )
         assert response.agent_info == Implementation(
-            name="@mistralai/mistral-vibe", title="Mistral Vibe", version="2.9.4"
+            name="@adacor/workplace-cli", title="Workplace CLI", version=__version__
         )
 
         assert response.auth_methods == []
@@ -62,18 +63,18 @@ class TestACPInitialize:
             ),
         )
         assert response.agent_info == Implementation(
-            name="@mistralai/mistral-vibe", title="Mistral Vibe", version="2.9.4"
+            name="@adacor/workplace-cli", title="Workplace CLI", version=__version__
         )
 
         assert response.auth_methods is not None
         assert len(response.auth_methods) == 1
         auth_method = response.auth_methods[0]
-        assert auth_method.id == "vibe-setup"
+        assert auth_method.id == "workplace-setup"
         assert auth_method.name == "Register your API Key"
-        assert auth_method.description == "Register your API Key inside Mistral Vibe"
+        assert auth_method.description == "Register your API Key inside Workplace CLI"
         assert auth_method.field_meta is not None
         assert "terminal-auth" in auth_method.field_meta
         terminal_auth_meta = auth_method.field_meta["terminal-auth"]
         assert "command" in terminal_auth_meta
         assert "args" in terminal_auth_meta
-        assert terminal_auth_meta["label"] == "Mistral Vibe Setup"
+        assert terminal_auth_meta["label"] == "Workplace CLI Setup"

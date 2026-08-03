@@ -56,7 +56,7 @@ def test_spawn_cli_runs_configured_hook_after_turn(
     e2e_workdir: Path,
     spawned_vibe_process: SpawnedVibeProcessFixture,
 ) -> None:
-    vibe_home = Path(os.environ["VIBE_HOME"])
+    vibe_home = Path(os.environ["WORKPLACE_HOME"])
     invocation_path = vibe_home / "hook-invocation.json"
     _enable_hooks(vibe_home, invocation_path)
 

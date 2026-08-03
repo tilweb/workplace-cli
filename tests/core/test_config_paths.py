@@ -46,7 +46,7 @@ class TestProjectToolsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: False)
-        (tmp_path / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / ".workplace" / "tools").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_tools_dirs == []
 
@@ -63,7 +63,7 @@ class TestProjectToolsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        tools_dir = tmp_path / ".vibe" / "tools"
+        tools_dir = tmp_path / ".workplace" / "tools"
         tools_dir.mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_tools_dirs == [tools_dir]
@@ -73,8 +73,8 @@ class TestProjectToolsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe").mkdir()
-        (tmp_path / ".vibe" / "tools").write_text("", encoding="utf-8")
+        (tmp_path / ".workplace").mkdir()
+        (tmp_path / ".workplace" / "tools").write_text("", encoding="utf-8")
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_tools_dirs == []
 
@@ -83,12 +83,12 @@ class TestProjectToolsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "tools").mkdir(parents=True)
-        (tmp_path / "sub" / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / ".workplace" / "tools").mkdir(parents=True)
+        (tmp_path / "sub" / ".workplace" / "tools").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_tools_dirs == [
-            tmp_path / ".vibe" / "tools",
-            tmp_path / "sub" / ".vibe" / "tools",
+            tmp_path / ".workplace" / "tools",
+            tmp_path / "sub" / ".workplace" / "tools",
         ]
 
     def test_does_not_descend_into_ignored_dirs(
@@ -96,10 +96,10 @@ class TestProjectToolsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "tools").mkdir(parents=True)
-        (tmp_path / ".git" / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / ".workplace" / "tools").mkdir(parents=True)
+        (tmp_path / ".git" / ".workplace" / "tools").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
-        assert mgr.project_tools_dirs == [tmp_path / ".vibe" / "tools"]
+        assert mgr.project_tools_dirs == [tmp_path / ".workplace" / "tools"]
 
 
 class TestProjectAgentsDirs:
@@ -115,7 +115,7 @@ class TestProjectAgentsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: False)
-        (tmp_path / ".vibe" / "agents").mkdir(parents=True)
+        (tmp_path / ".workplace" / "agents").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_agents_dirs == []
 
@@ -132,7 +132,7 @@ class TestProjectAgentsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        agents_dir = tmp_path / ".vibe" / "agents"
+        agents_dir = tmp_path / ".workplace" / "agents"
         agents_dir.mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_agents_dirs == [agents_dir]
@@ -142,8 +142,8 @@ class TestProjectAgentsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe").mkdir()
-        (tmp_path / ".vibe" / "agents").write_text("", encoding="utf-8")
+        (tmp_path / ".workplace").mkdir()
+        (tmp_path / ".workplace" / "agents").write_text("", encoding="utf-8")
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_agents_dirs == []
 
@@ -152,12 +152,12 @@ class TestProjectAgentsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "agents").mkdir(parents=True)
-        (tmp_path / "sub" / "deep" / ".vibe" / "agents").mkdir(parents=True)
+        (tmp_path / ".workplace" / "agents").mkdir(parents=True)
+        (tmp_path / "sub" / "deep" / ".workplace" / "agents").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_agents_dirs == [
-            tmp_path / ".vibe" / "agents",
-            tmp_path / "sub" / "deep" / ".vibe" / "agents",
+            tmp_path / ".workplace" / "agents",
+            tmp_path / "sub" / "deep" / ".workplace" / "agents",
         ]
 
     def test_does_not_descend_into_ignored_dirs(
@@ -165,10 +165,10 @@ class TestProjectAgentsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "agents").mkdir(parents=True)
-        (tmp_path / "__pycache__" / ".vibe" / "agents").mkdir(parents=True)
+        (tmp_path / ".workplace" / "agents").mkdir(parents=True)
+        (tmp_path / "__pycache__" / ".workplace" / "agents").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
-        assert mgr.project_agents_dirs == [tmp_path / ".vibe" / "agents"]
+        assert mgr.project_agents_dirs == [tmp_path / ".workplace" / "agents"]
 
 
 class TestUserToolsDirs:
@@ -481,7 +481,7 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        vibe_skills = tmp_path / ".vibe" / "skills"
+        vibe_skills = tmp_path / ".workplace" / "skills"
         vibe_skills.mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_skills_dirs == [vibe_skills]
@@ -501,7 +501,7 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        vibe_skills = tmp_path / ".vibe" / "skills"
+        vibe_skills = tmp_path / ".workplace" / "skills"
         agents_skills = tmp_path / ".agents" / "skills"
         vibe_skills.mkdir(parents=True)
         agents_skills.mkdir(parents=True)
@@ -513,8 +513,8 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe").mkdir()
-        (tmp_path / ".vibe" / "skills").write_text("", encoding="utf-8")
+        (tmp_path / ".workplace").mkdir()
+        (tmp_path / ".workplace" / "skills").write_text("", encoding="utf-8")
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_skills_dirs == []
 
@@ -523,7 +523,7 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        vibe_skills = tmp_path / ".vibe" / "skills"
+        vibe_skills = tmp_path / ".workplace" / "skills"
         vibe_skills.mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user",))
         assert mgr.project_skills_dirs == []
@@ -533,7 +533,7 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: False)
-        vibe_skills = tmp_path / ".vibe" / "skills"
+        vibe_skills = tmp_path / ".workplace" / "skills"
         vibe_skills.mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_skills_dirs == []
@@ -543,14 +543,14 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / ".workplace" / "skills").mkdir(parents=True)
         (tmp_path / "sub" / ".agents" / "skills").mkdir(parents=True)
-        (tmp_path / "sub" / "deep" / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / "sub" / "deep" / ".workplace" / "skills").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
         assert mgr.project_skills_dirs == [
-            tmp_path / ".vibe" / "skills",
+            tmp_path / ".workplace" / "skills",
             tmp_path / "sub" / ".agents" / "skills",
-            tmp_path / "sub" / "deep" / ".vibe" / "skills",
+            tmp_path / "sub" / "deep" / ".workplace" / "skills",
         ]
 
     def test_does_not_descend_into_ignored_dirs(
@@ -558,10 +558,10 @@ class TestProjectSkillsDirs:
     ) -> None:
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(trusted_folders_manager, "is_trusted", lambda _: True)
-        (tmp_path / ".vibe" / "skills").mkdir(parents=True)
-        (tmp_path / "node_modules" / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / ".workplace" / "skills").mkdir(parents=True)
+        (tmp_path / "node_modules" / ".workplace" / "skills").mkdir(parents=True)
         mgr = HarnessFilesManager(sources=("user", "project"))
-        assert mgr.project_skills_dirs == [tmp_path / ".vibe" / "skills"]
+        assert mgr.project_skills_dirs == [tmp_path / ".workplace" / "skills"]
 
 
 class TestLoadUserDoc:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -17,8 +18,6 @@ from vibe.core.telemetry.build_metadata import (
 from vibe.core.telemetry.send import TelemetryClient
 from vibe.core.telemetry.types import EntrypointMetadata, TelemetryRequestMetadata
 from vibe.core.tools.base import BaseTool, ToolPermission
-from vibe.core.types import Backend
-from vibe.core.utils import get_user_agent
 
 _original_send_telemetry_event = TelemetryClient.send_telemetry_event
 from vibe.core.tools.builtins.write_file import WriteFile, WriteFileArgs
@@ -56,18 +55,19 @@ class TestTelemetryClient:
         client = TelemetryClient(config_getter=_raise_config_error)
         client.send_telemetry_event("vibe.test", {})
 
-    def test_send_telemetry_event_does_nothing_when_api_key_is_none(
+    def test_send_telemetry_event_does_nothing_when_mode_off(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        monkeypatch.setattr(
+            TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
+        )
+        monkeypatch.delenv("WORKPLACE_TELEMETRY", raising=False)
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.delenv(env_key, raising=False)
         client = TelemetryClient(config_getter=lambda: config)
-        assert client._get_mistral_api_key() is None
         client._client = MagicMock()
         client._client.post = AsyncMock()
 
-        client.send_telemetry_event("vibe.test", {})
+        client.send_telemetry_event("workplace.test", {})
         _run_telemetry_tasks()
 
         client._client.post.assert_not_called()
@@ -78,14 +78,16 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=False)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         client = TelemetryClient(config_getter=lambda: config)
         client._client = MagicMock()
         client._client.post = AsyncMock()
 
-        client.send_telemetry_event("vibe.test", {})
+        client.send_telemetry_event("workplace.test", {})
         _run_telemetry_tasks()
 
         client._client.post.assert_not_called()
@@ -97,26 +99,24 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         client = TelemetryClient(config_getter=lambda: config)
         mock_post = AsyncMock(return_value=MagicMock(status_code=204))
         client._client = MagicMock()
         client._client.post = mock_post
         client._client.aclose = AsyncMock()
 
-        client.send_telemetry_event("vibe.test_event", {"key": "value"})
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
         await client.aclose()
 
         mock_post.assert_called_once_with(
-            "https://api.mistral.ai/v1/datalake/events",
-            json={"event": "vibe.test_event", "properties": {"key": "value"}},
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Bearer sk-test",
-                "User-Agent": get_user_agent(Backend.MISTRAL),
-            },
+            "https://telemetry.example/events",
+            json={"event": "workplace.test_event", "properties": {"key": "value"}},
+            headers={"Content-Type": "application/json"},
         )
 
     def test_send_tool_call_finished_payload_shape(
@@ -139,7 +139,7 @@ class TestTelemetryClient:
 
         assert len(telemetry_events) == 1
         event_name = telemetry_events[0]["event_name"]
-        assert event_name == "vibe.tool_call_finished"
+        assert event_name == "workplace.tool_call_finished"
         properties = telemetry_events[0]["properties"]
         assert properties["tool_name"] == "todo"
         assert properties["status"] == "success"
@@ -234,7 +234,7 @@ class TestTelemetryClient:
         client.send_user_copied_text("hello world")
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.user_copied_text"
+        assert telemetry_events[0]["event_name"] == "workplace.user_copied_text"
         assert telemetry_events[0]["properties"]["text_length"] == 11
 
     def test_send_user_cancelled_action_payload(
@@ -246,7 +246,7 @@ class TestTelemetryClient:
         client.send_user_cancelled_action("interrupt_agent")
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.user_cancelled_action"
+        assert telemetry_events[0]["event_name"] == "workplace.user_cancelled_action"
         assert telemetry_events[0]["properties"]["action"] == "interrupt_agent"
 
     def test_send_at_mention_inserted_payload(
@@ -263,7 +263,7 @@ class TestTelemetryClient:
         )
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.at_mention_inserted"
+        assert telemetry_events[0]["event_name"] == "workplace.at_mention_inserted"
         assert telemetry_events[0]["properties"] == {
             "nb_mentions": 2,
             "context_types": {"file": 1, "folder": 1},
@@ -338,7 +338,7 @@ class TestTelemetryClient:
         )
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.auto_compact_triggered"
+        assert telemetry_events[0]["event_name"] == "workplace.auto_compact_triggered"
         assert telemetry_events[0]["properties"] == {
             "nb_context_tokens_before": 123,
             "nb_context_tokens_after": 45,
@@ -356,7 +356,7 @@ class TestTelemetryClient:
         client.send_slash_command_used("my_skill", "skill")
 
         assert len(telemetry_events) == 2
-        assert telemetry_events[0]["event_name"] == "vibe.slash_command_used"
+        assert telemetry_events[0]["event_name"] == "workplace.slash_command_used"
         assert telemetry_events[0]["properties"]["command"] == "help"
         assert telemetry_events[0]["properties"]["command_type"] == "builtin"
         assert telemetry_events[1]["properties"]["command"] == "my_skill"
@@ -381,7 +381,7 @@ class TestTelemetryClient:
 
         assert len(telemetry_events) == 1
         event_name = telemetry_events[0]["event_name"]
-        assert event_name == "vibe.new_session"
+        assert event_name == "workplace.new_session"
         properties = telemetry_events[0]["properties"]
         assert properties["has_agents_md"] is True
         assert properties["nb_skills"] == 2
@@ -447,11 +447,11 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_provider_for_model(
-            config.get_active_model()
-        ).api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         client = TelemetryClient(
             config_getter=lambda: config,
             session_id_getter=lambda: "session-123",
@@ -462,24 +462,20 @@ class TestTelemetryClient:
         client._client.post = mock_post
         client._client.aclose = AsyncMock()
 
-        client.send_telemetry_event("vibe.test_event", {"key": "value"})
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
         await client.aclose()
 
         mock_post.assert_called_once_with(
-            "https://api.mistral.ai/v1/datalake/events",
+            "https://telemetry.example/events",
             json={
-                "event": "vibe.test_event",
+                "event": "workplace.test_event",
                 "properties": {
                     "session_id": "session-123",
                     "parent_session_id": "parent-session-456",
                     "key": "value",
                 },
             },
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Bearer sk-test",
-                "User-Agent": get_user_agent(Backend.MISTRAL),
-            },
+            headers={"Content-Type": "application/json"},
         )
 
     @pytest.mark.asyncio
@@ -489,9 +485,11 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         session_id = "test-session-uuid"
         client = TelemetryClient(
             config_getter=lambda: config, session_id_getter=lambda: session_id
@@ -501,20 +499,16 @@ class TestTelemetryClient:
         client._client.post = mock_post
         client._client.aclose = AsyncMock()
 
-        client.send_telemetry_event("vibe.test_event", {"key": "value"})
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
         await client.aclose()
 
         mock_post.assert_called_once_with(
-            "https://api.mistral.ai/v1/datalake/events",
+            "https://telemetry.example/events",
             json={
-                "event": "vibe.test_event",
+                "event": "workplace.test_event",
                 "properties": {"session_id": session_id, "key": "value"},
             },
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Bearer sk-test",
-                "User-Agent": get_user_agent(Backend.MISTRAL),
-            },
+            headers={"Content-Type": "application/json"},
         )
 
     @pytest.mark.asyncio
@@ -524,26 +518,24 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         client = TelemetryClient(config_getter=lambda: config)
         mock_post = AsyncMock(return_value=MagicMock(status_code=204))
         client._client = MagicMock()
         client._client.post = mock_post
         client._client.aclose = AsyncMock()
 
-        client.send_telemetry_event("vibe.test_event", {"key": "value"})
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
         await client.aclose()
 
         mock_post.assert_called_once_with(
-            "https://api.mistral.ai/v1/datalake/events",
-            json={"event": "vibe.test_event", "properties": {"key": "value"}},
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Bearer sk-test",
-                "User-Agent": get_user_agent(Backend.MISTRAL),
-            },
+            "https://telemetry.example/events",
+            json={"event": "workplace.test_event", "properties": {"key": "value"}},
+            headers={"Content-Type": "application/json"},
         )
 
     @pytest.mark.asyncio
@@ -553,9 +545,11 @@ class TestTelemetryClient:
         monkeypatch.setattr(
             TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.setenv(
+            "WORKPLACE_TELEMETRY_URL", "https://telemetry.example/events"
+        )
         config = build_test_vibe_config(enable_telemetry=True)
-        env_key = config.get_active_provider().api_key_env_var
-        monkeypatch.setenv(env_key, "sk-test")
         current_id = "first-session-id"
         client = TelemetryClient(
             config_getter=lambda: config, session_id_getter=lambda: current_id
@@ -565,9 +559,9 @@ class TestTelemetryClient:
         client._client.post = mock_post
         client._client.aclose = AsyncMock()
 
-        client.send_telemetry_event("vibe.test_event", {})
+        client.send_telemetry_event("workplace.test_event", {})
         current_id = "second-session-id"
-        client.send_telemetry_event("vibe.test_event", {})
+        client.send_telemetry_event("workplace.test_event", {})
         await client.aclose()
 
         calls = mock_post.call_args_list
@@ -607,7 +601,7 @@ class TestTelemetryClient:
         client.send_ready(init_duration_ms=1240)
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.ready"
+        assert telemetry_events[0]["event_name"] == "workplace.ready"
         assert telemetry_events[0]["properties"]["init_duration_ms"] == 1240
 
     def test_send_request_sent_payload(
@@ -625,13 +619,13 @@ class TestTelemetryClient:
         )
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.request_sent"
+        assert telemetry_events[0]["event_name"] == "workplace.request_sent"
         properties = telemetry_events[0]["properties"]
         assert properties["model"] == "codestral"
         assert properties["nb_context_chars"] == 1234
         assert properties["nb_context_messages"] == 5
         assert properties["nb_prompt_chars"] == 42
-        assert properties["call_source"] == "vibe_code"
+        assert properties["call_source"] == "workplace_cli"
         assert properties["call_type"] == "main_call"
         assert properties["message_id"] is None
 
@@ -644,7 +638,7 @@ class TestTelemetryClient:
         client.send_user_rating_feedback(rating=2, model="mistral-large")
 
         assert len(telemetry_events) == 1
-        assert telemetry_events[0]["event_name"] == "vibe.user_rating_feedback"
+        assert telemetry_events[0]["event_name"] == "workplace.user_rating_feedback"
         properties = telemetry_events[0]["properties"]
         assert properties["rating"] == 2
         assert properties["model"] == "mistral-large"
@@ -673,75 +667,47 @@ class TestTelemetryClient:
         assert len(telemetry_events) == 1
         assert "correlation_id" not in telemetry_events[0]
 
-    def test_telemetry_url_custom_provider_config(self) -> None:
-        from vibe.core.config import ProviderConfig
-        from vibe.core.types import Backend
-
-        custom_api_base = "https://api.custom.host/v2"
-
-        config = build_test_vibe_config(
-            enable_telemetry=True,
-            providers=[
-                ProviderConfig(
-                    name="mistral",
-                    api_base=custom_api_base,
-                    api_key_env_var="MISTRAL_API_KEY",
-                    backend=Backend.MISTRAL,
-                )
-            ],
+    def test_local_mode_appends_event_to_jsonl_file(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+    ) -> None:
+        monkeypatch.setattr(
+            TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
+        telemetry_file = tmp_path / "usage.jsonl"
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "local")
+        monkeypatch.setenv("WORKPLACE_TELEMETRY_FILE", str(telemetry_file))
+        config = build_test_vibe_config(enable_telemetry=True)
         client = TelemetryClient(config_getter=lambda: config)
 
-        assert (
-            client._get_telemetry_url(custom_api_base)
-            == "https://api.custom.host/v1/datalake/events"
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
+
+        lines = telemetry_file.read_text(encoding="utf-8").splitlines()
+        assert len(lines) == 1
+        assert json.loads(lines[0]) == {
+            "event": "workplace.test_event",
+            "properties": {"key": "value"},
+        }
+
+    @pytest.mark.asyncio
+    async def test_remote_mode_without_url_does_not_post(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(
+            TelemetryClient, "send_telemetry_event", _original_send_telemetry_event
         )
-
-    def test_telemetry_url_preserves_port_in_api_base(self) -> None:
-        from vibe.core.config import ProviderConfig
-        from vibe.core.types import Backend
-
-        custom_api_base = "http://api.custom.host:8080/v1/"
-
-        config = build_test_vibe_config(
-            enable_telemetry=True,
-            providers=[
-                ProviderConfig(
-                    name="mistral",
-                    api_base=custom_api_base,
-                    api_key_env_var="MISTRAL_API_KEY",
-                    backend=Backend.MISTRAL,
-                )
-            ],
-        )
+        monkeypatch.setenv("WORKPLACE_TELEMETRY", "remote")
+        monkeypatch.delenv("WORKPLACE_TELEMETRY_URL", raising=False)
+        config = build_test_vibe_config(enable_telemetry=True)
         client = TelemetryClient(config_getter=lambda: config)
+        mock_post = AsyncMock(return_value=MagicMock(status_code=204))
+        client._client = MagicMock()
+        client._client.post = mock_post
+        client._client.aclose = AsyncMock()
 
-        assert (
-            client._get_telemetry_url(custom_api_base)
-            == "http://api.custom.host:8080/v1/datalake/events"
-        )
+        client.send_telemetry_event("workplace.test_event", {"key": "value"})
+        await client.aclose()
 
-    def test_telemetry_url_falls_back_to_default_when_api_base_malformed(self) -> None:
-        from vibe.core.config import ProviderConfig
-        from vibe.core.types import Backend
-
-        config = build_test_vibe_config(
-            enable_telemetry=True,
-            providers=[
-                ProviderConfig(
-                    name="mistral",
-                    api_base="not-a-valid-url",
-                    api_key_env_var="MISTRAL_API_KEY",
-                    backend=Backend.MISTRAL,
-                )
-            ],
-        )
-        client = TelemetryClient(config_getter=lambda: config)
-
-        assert (
-            client._get_telemetry_url("not-a-valid-url")
-            == "https://api.mistral.ai/v1/datalake/events"
-        )
+        mock_post.assert_not_called()
 
     def test_is_active_false_when_mistral_provider_exists_but_no_api_key(
         self, monkeypatch: pytest.MonkeyPatch

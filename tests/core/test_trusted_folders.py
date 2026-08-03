@@ -312,7 +312,7 @@ class TestHasAgentsMdFile:
 
     def test_returns_false_when_only_other_files_exist(self, tmp_path: Path) -> None:
         (tmp_path / "README.md").write_text("", encoding="utf-8")
-        (tmp_path / ".vibe").mkdir()
+        (tmp_path / ".workplace").mkdir()
         assert has_agents_md_file(tmp_path) is False
 
     def test_agents_md_filename_constant(self) -> None:
@@ -325,9 +325,9 @@ class TestFindTrustableFiles:
         assert find_trustable_files(tmp_path) == []
 
     def test_detects_vibe_dir(self, tmp_path: Path) -> None:
-        (tmp_path / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / ".workplace" / "tools").mkdir(parents=True)
         result = find_trustable_files(tmp_path)
-        assert ".vibe/" in result
+        assert ".workplace/" in result
 
     def test_detects_agents_dir(self, tmp_path: Path) -> None:
         (tmp_path / ".agents" / "skills").mkdir(parents=True)
@@ -335,7 +335,7 @@ class TestFindTrustableFiles:
         assert ".agents/" in result
 
     def test_ignores_empty_vibe_dir(self, tmp_path: Path) -> None:
-        (tmp_path / ".vibe").mkdir()
+        (tmp_path / ".workplace").mkdir()
         assert find_trustable_files(tmp_path) == []
 
     def test_ignores_empty_agents_dir(self, tmp_path: Path) -> None:
@@ -352,9 +352,9 @@ class TestFindTrustableFiles:
         assert find_trustable_files(tmp_path) == []
 
     def test_detects_vibe_config_in_subfolder(self, tmp_path: Path) -> None:
-        (tmp_path / "sub" / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / "sub" / ".workplace" / "skills").mkdir(parents=True)
         result = find_trustable_files(tmp_path)
-        assert "sub/.vibe/" in result
+        assert "sub/.workplace/" in result
 
     def test_detects_agents_skills_in_subfolder(self, tmp_path: Path) -> None:
         (tmp_path / "deep" / "nested" / ".agents" / "skills").mkdir(parents=True)
@@ -364,24 +364,24 @@ class TestFindTrustableFiles:
     def test_returns_empty_when_config_only_inside_ignored_dir(
         self, tmp_path: Path
     ) -> None:
-        (tmp_path / "node_modules" / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / "node_modules" / ".workplace" / "skills").mkdir(parents=True)
         assert find_trustable_files(tmp_path) == []
 
     def test_detects_nested_vibe_dir(self, tmp_path: Path) -> None:
-        (tmp_path / "pkg" / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / "pkg" / ".workplace" / "tools").mkdir(parents=True)
         result = find_trustable_files(tmp_path)
-        assert "pkg/.vibe/" in result
+        assert "pkg/.workplace/" in result
 
     def test_detects_multiple_files(self, tmp_path: Path) -> None:
-        (tmp_path / ".vibe" / "skills").mkdir(parents=True)
+        (tmp_path / ".workplace" / "skills").mkdir(parents=True)
         (tmp_path / "AGENTS.md").write_text("# Agent", encoding="utf-8")
         (tmp_path / "sub" / ".agents" / "skills").mkdir(parents=True)
         result = find_trustable_files(tmp_path)
-        assert ".vibe/" in result
+        assert ".workplace/" in result
         assert "AGENTS.md" in result
         assert "sub/.agents/" in result
 
     def test_no_duplicates_for_root_vibe_dir(self, tmp_path: Path) -> None:
-        (tmp_path / ".vibe" / "tools").mkdir(parents=True)
+        (tmp_path / ".workplace" / "tools").mkdir(parents=True)
         result = find_trustable_files(tmp_path)
-        assert result.count(".vibe/") == 1
+        assert result.count(".workplace/") == 1

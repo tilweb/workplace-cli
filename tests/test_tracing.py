@@ -116,12 +116,12 @@ class TestAgentSpan:
 
         assert len(_otel_provider.spans) == 1
         span = _otel_provider.spans[0]
-        assert span.name == "invoke_agent mistral-vibe"
+        assert span.name == "invoke_agent workplace-cli"
         assert span.status.status_code == StatusCode.OK
         attrs = dict(span.attributes)
         assert attrs["gen_ai.operation.name"] == "invoke_agent"
         assert attrs["gen_ai.provider.name"] == "mistral_ai"
-        assert attrs["gen_ai.agent.name"] == "mistral-vibe"
+        assert attrs["gen_ai.agent.name"] == "workplace-cli"
         assert attrs["gen_ai.request.model"] == "devstral"
         assert attrs["gen_ai.conversation.id"] == "s1"
 
@@ -344,12 +344,12 @@ class TestIntegration:
         assert tool.parent.span_id == agent.context.span_id
 
         # -- Agent span: name, status, and every attribute set by agent_span() --
-        assert agent.name == "invoke_agent mistral-vibe"
+        assert agent.name == "invoke_agent workplace-cli"
         assert agent.status.status_code == StatusCode.OK
         agent_attrs = dict(agent.attributes)
         assert agent_attrs["gen_ai.operation.name"] == "invoke_agent"
         assert agent_attrs["gen_ai.provider.name"] == "mistral_ai"
-        assert agent_attrs["gen_ai.agent.name"] == "mistral-vibe"
+        assert agent_attrs["gen_ai.agent.name"] == "workplace-cli"
         assert agent_attrs["gen_ai.request.model"] == "mistral-vibe-cli-latest"
         assert agent_attrs["gen_ai.conversation.id"] == agent_loop.session_id
 

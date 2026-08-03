@@ -112,7 +112,9 @@ async def test_single_tool_call_executes_under_auto_approve(
     assert "total_count" in (tool_msgs[-1].content or "")
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 1
     assert tool_finished[0]["properties"]["tool_name"] == "todo"
@@ -157,7 +159,9 @@ async def test_tool_call_requires_approval_if_not_auto_approved(
     assert agent_loop.stats.tool_calls_succeeded == 0
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 1
     assert tool_finished[0]["properties"]["approval_type"] == "ask"
@@ -197,7 +201,9 @@ async def test_tool_call_approved_by_callback(telemetry_events: list[dict]) -> N
     assert agent_loop.stats.tool_calls_succeeded == 1
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 1
     assert tool_finished[0]["properties"]["approval_type"] == "ask"
@@ -243,7 +249,9 @@ async def test_tool_call_rejected_when_auto_approve_disabled_and_rejected_by_cal
     assert agent_loop.stats.tool_calls_succeeded == 0
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 1
     assert tool_finished[0]["properties"]["approval_type"] == "ask"
@@ -287,7 +295,9 @@ async def test_tool_call_skipped_when_permission_is_never(
     assert agent_loop.stats.tool_calls_succeeded == 0
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 1
     assert tool_finished[0]["properties"]["approval_type"] == "never"
@@ -563,7 +573,9 @@ async def test_parallel_tool_calls_produce_correct_events(
     assert agent_loop.stats.tool_calls_succeeded == 2
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 2
 
@@ -688,7 +700,9 @@ async def test_parallel_mixed_approval_and_rejection(
     assert agent_loop.stats.tool_calls_succeeded == 1
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 2
 
@@ -729,7 +743,9 @@ async def test_parallel_three_tools_all_succeed(telemetry_events: list[dict]) ->
     assert len(tool_msgs) == 3
 
     tool_finished = [
-        e for e in telemetry_events if e.get("event_name") == "vibe.tool_call_finished"
+        e
+        for e in telemetry_events
+        if e.get("event_name") == "workplace.tool_call_finished"
     ]
     assert len(tool_finished) == 3
 

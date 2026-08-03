@@ -196,9 +196,9 @@ class TestSkillManagerSearchPaths:
         self, tmp_working_directory: Path
     ) -> None:
         trusted_folders_manager.add_trusted(tmp_working_directory)
-        vibe_skills = tmp_working_directory / ".vibe" / "skills"
-        vibe_skills.mkdir(parents=True)
-        create_skill(vibe_skills, "vibe-skill", "Skill from .vibe/skills")
+        workplace_skills = tmp_working_directory / ".workplace" / "skills"
+        workplace_skills.mkdir(parents=True)
+        create_skill(workplace_skills, "vibe-skill", "Skill from .workplace/skills")
 
         config = build_test_vibe_config(
             system_prompt_id="tests", include_project_context=False, skill_paths=[]
@@ -208,7 +208,7 @@ class TestSkillManagerSearchPaths:
         assert "vibe-skill" in manager.available_skills
         assert (
             manager.available_skills["vibe-skill"].description
-            == "Skill from .vibe/skills"
+            == "Skill from .workplace/skills"
         )
 
     def test_discovers_from_agents_skills_when_cwd_trusted(
@@ -234,11 +234,11 @@ class TestSkillManagerSearchPaths:
         self, tmp_working_directory: Path
     ) -> None:
         trusted_folders_manager.add_trusted(tmp_working_directory)
-        vibe_skills = tmp_working_directory / ".vibe" / "skills"
+        workplace_skills = tmp_working_directory / ".workplace" / "skills"
         agents_skills = tmp_working_directory / ".agents" / "skills"
-        vibe_skills.mkdir(parents=True)
+        workplace_skills.mkdir(parents=True)
         agents_skills.mkdir(parents=True)
-        create_skill(vibe_skills, "vibe-only", "From .vibe")
+        create_skill(workplace_skills, "vibe-only", "From .workplace")
         create_skill(agents_skills, "agents-only", "From .agents")
 
         config = build_test_vibe_config(
@@ -248,18 +248,18 @@ class TestSkillManagerSearchPaths:
 
         skills = manager.available_skills
         assert len(skills) == 2 + len(BUILTIN_SKILLS)
-        assert skills["vibe-only"].description == "From .vibe"
+        assert skills["vibe-only"].description == "From .workplace"
         assert skills["agents-only"].description == "From .agents"
 
     def test_first_discovered_wins_when_same_skill_in_vibe_and_agents(
         self, tmp_working_directory: Path
     ) -> None:
         trusted_folders_manager.add_trusted(tmp_working_directory)
-        vibe_skills = tmp_working_directory / ".vibe" / "skills"
+        workplace_skills = tmp_working_directory / ".workplace" / "skills"
         agents_skills = tmp_working_directory / ".agents" / "skills"
-        vibe_skills.mkdir(parents=True)
+        workplace_skills.mkdir(parents=True)
         agents_skills.mkdir(parents=True)
-        create_skill(vibe_skills, "shared-skill", "First from .vibe")
+        create_skill(workplace_skills, "shared-skill", "First from .workplace")
         create_skill(agents_skills, "shared-skill", "Second from .agents")
 
         config = build_test_vibe_config(
@@ -269,7 +269,7 @@ class TestSkillManagerSearchPaths:
 
         skills = manager.available_skills
         assert len(skills) == 1 + len(BUILTIN_SKILLS)
-        assert skills["shared-skill"].description == "First from .vibe"
+        assert skills["shared-skill"].description == "First from .workplace"
 
     def test_discovers_from_multiple_skill_paths(self, tmp_path: Path) -> None:
         # Create two separate skill directories

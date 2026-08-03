@@ -270,7 +270,9 @@ class TestSlashCommandTelemetry:
         await _prompt(acp_agent_loop, session_id, "/help")
 
         slash_events = [
-            e for e in telemetry_events if e["event_name"] == "vibe.slash_command_used"
+            e
+            for e in telemetry_events
+            if e["event_name"] == "workplace.slash_command_used"
         ]
         assert len(slash_events) == 1
         assert slash_events[0]["properties"]["command"] == "help"
@@ -290,7 +292,9 @@ class TestSlashCommandTelemetry:
         await _prompt(acp_agent_loop_with_skills, session_id, "/my-skill")
 
         slash_events = [
-            e for e in telemetry_events if e["event_name"] == "vibe.slash_command_used"
+            e
+            for e in telemetry_events
+            if e["event_name"] == "workplace.slash_command_used"
         ]
         assert len(slash_events) == 1
         assert slash_events[0]["properties"]["command"] == "my-skill"
@@ -306,7 +310,9 @@ class TestSlashCommandTelemetry:
         await _prompt(acp_agent_loop, session_id, "/nonexistent")
 
         slash_events = [
-            e for e in telemetry_events if e["event_name"] == "vibe.slash_command_used"
+            e
+            for e in telemetry_events
+            if e["event_name"] == "workplace.slash_command_used"
         ]
         assert slash_events == []
 
@@ -320,7 +326,9 @@ class TestSlashCommandTelemetry:
         await _prompt(acp_agent_loop, session_id, "Hello world")
 
         slash_events = [
-            e for e in telemetry_events if e["event_name"] == "vibe.slash_command_used"
+            e
+            for e in telemetry_events
+            if e["event_name"] == "workplace.slash_command_used"
         ]
         assert slash_events == []
 

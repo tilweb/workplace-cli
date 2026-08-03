@@ -13,7 +13,7 @@ from tests.conftest import (
 )
 from tests.mock.utils import mock_llm_chunk
 from tests.stubs.fake_backend import FakeBackend
-from vibe.core.config import ModelConfig
+from vibe.core.config import DEFAULT_PROVIDERS, ModelConfig
 from vibe.core.types import (
     AssistantEvent,
     CompactEndEvent,
@@ -30,7 +30,7 @@ def _get_auto_compact_properties(
     auto_compact = [
         event
         for event in telemetry_events
-        if event.get("event_name") == "vibe.auto_compact_triggered"
+        if event.get("event_name") == "workplace.auto_compact_triggered"
     ]
     assert len(auto_compact) == 1
     return cast(dict[str, object], auto_compact[0]["properties"])
@@ -42,7 +42,9 @@ async def test_auto_compact_emits_correct_events(telemetry_events: list[dict]) -
         [mock_llm_chunk(content="<summary>")],
         [mock_llm_chunk(content="<final>")],
     ])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.stats.context_tokens = 2
     old_session_id = agent.session_id
@@ -96,7 +98,9 @@ async def test_auto_compact_emits_terminal_telemetry(
     telemetry_events: list[dict],
 ) -> None:
     backend = FakeBackend([[mock_llm_chunk(content="<final>")]])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.stats.context_tokens = 2
     old_session_id = agent.session_id
@@ -141,7 +145,9 @@ async def test_auto_compact_observer_sees_user_msg_not_summary() -> None:
         [mock_llm_chunk(content="<summary>")],
         [mock_llm_chunk(content="<final>")],
     ])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(
         config=cfg, message_observer=observer, backend=backend
     )
@@ -167,7 +173,9 @@ async def test_auto_compact_observer_does_not_see_summary_request() -> None:
         [mock_llm_chunk(content="<summary>")],
         [mock_llm_chunk(content="<final>")],
     ])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(
         config=cfg, message_observer=observer, backend=backend
     )
@@ -187,7 +195,9 @@ async def test_compact_replaces_messages_with_summary() -> None:
         [mock_llm_chunk(content="<summary>")],
         [mock_llm_chunk(content="<final>")],
     ])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.stats.context_tokens = 2
 
@@ -223,7 +233,10 @@ async def test_compact_uses_compaction_model() -> None:
         [mock_llm_chunk(content="<final>")],
     ])
     cfg = build_test_vibe_config(
-        models=make_test_models(auto_compact_threshold=1), compaction_model=compaction
+        active_model="devstral-small",
+        models=make_test_models(auto_compact_threshold=1),
+        compaction_model=compaction,
+        providers=DEFAULT_PROVIDERS,
     )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.stats.context_tokens = 2
@@ -241,7 +254,9 @@ async def test_compact_uses_active_model_when_no_compaction_model() -> None:
         [mock_llm_chunk(content="<summary>")],
         [mock_llm_chunk(content="<final>")],
     ])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=1))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=1), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.stats.context_tokens = 2
 
@@ -255,7 +270,9 @@ async def test_compact_uses_active_model_when_no_compaction_model() -> None:
 @pytest.mark.asyncio
 async def test_compact_appends_extra_instructions_to_prompt() -> None:
     backend = FakeBackend([[mock_llm_chunk(content="<summary>")]])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=999))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=999), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.messages.append(LLMMessage(role=Role.user, content="Hello"))
     agent.stats.context_tokens = 100
@@ -271,7 +288,9 @@ async def test_compact_appends_extra_instructions_to_prompt() -> None:
 @pytest.mark.asyncio
 async def test_compact_without_extra_instructions_has_no_additional_section() -> None:
     backend = FakeBackend([[mock_llm_chunk(content="<summary>")]])
-    cfg = build_test_vibe_config(models=make_test_models(auto_compact_threshold=999))
+    cfg = build_test_vibe_config(
+        models=make_test_models(auto_compact_threshold=999), providers=DEFAULT_PROVIDERS
+    )
     agent = build_test_agent_loop(config=cfg, backend=backend)
     agent.messages.append(LLMMessage(role=Role.user, content="Hello"))
     agent.stats.context_tokens = 100

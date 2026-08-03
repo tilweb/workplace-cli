@@ -98,9 +98,9 @@ class TestConfigLoading:
                 }
             ],
         )
-        project_vibe = tmp_working_directory / ".vibe"
+        project_workplace = tmp_working_directory / ".workplace"
         _write_hooks_toml(
-            project_vibe / "hooks.toml",
+            project_workplace / "hooks.toml",
             [
                 {
                     "name": "project-hook",
@@ -121,9 +121,9 @@ class TestConfigLoading:
     def test_project_file_skipped_when_untrusted(
         self, tmp_working_directory: Path, config_hooks_enabled: VibeConfig
     ) -> None:
-        project_vibe = tmp_working_directory / ".vibe"
+        project_workplace = tmp_working_directory / ".workplace"
         _write_hooks_toml(
-            project_vibe / "hooks.toml",
+            project_workplace / "hooks.toml",
             [
                 {
                     "name": "sneaky-hook",
@@ -145,9 +145,9 @@ class TestConfigLoading:
             config_dir / "hooks.toml",
             [{"name": "dup-hook", "type": "post_agent_turn", "command": "echo global"}],
         )
-        project_vibe = tmp_working_directory / ".vibe"
+        project_workplace = tmp_working_directory / ".workplace"
         _write_hooks_toml(
-            project_vibe / "hooks.toml",
+            project_workplace / "hooks.toml",
             [
                 {
                     "name": "dup-hook",

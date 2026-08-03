@@ -48,7 +48,9 @@ class TestACPNewSession:
         )
 
         new_session_events = [
-            e for e in telemetry_events if e.get("event_name") == "vibe.new_session"
+            e
+            for e in telemetry_events
+            if e.get("event_name") == "workplace.new_session"
         ]
         assert len(new_session_events) == 1
         assert new_session_events[0]["properties"]["entrypoint"] == "acp"

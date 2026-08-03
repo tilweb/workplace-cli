@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
+from vibe.cli.feature_flags import voice_features_enabled
 from vibe.cli.narrator_manager.narrator_manager_port import (
     NarratorManagerListener,
     NarratorState,
@@ -133,7 +134,8 @@ class NarratorManager:
     def _make_turn_summary(
         config: VibeConfig, telemetry_client: TelemetryClient | None = None
     ) -> NoopTurnSummary | TurnSummaryTracker:
-        if not config.narrator_enabled:
+        # === ADACOR PATCH: Narrator ausgeblendet (siehe feature_flags) ===
+        if not (voice_features_enabled() and config.narrator_enabled):
             return NoopTurnSummary()
         result = create_narrator_backend(config)
         if result is None:
@@ -151,7 +153,8 @@ class NarratorManager:
 
     @staticmethod
     def _make_tts_client(config: VibeConfig) -> TTSClientPort | None:
-        if not config.narrator_enabled:
+        # === ADACOR PATCH: Narrator-TTS ausgeblendet (siehe feature_flags) ===
+        if not (voice_features_enabled() and config.narrator_enabled):
             return None
         try:
             model = config.get_active_tts_model()

@@ -57,6 +57,16 @@ def get_base_config() -> dict[str, Any]:
 
 
 @pytest.fixture(autouse=True)
+def _enable_voice_features(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Voice/Narrator sind in Produktion hinter VOICE_FEATURES_ENABLED
+    # ausgeblendet (vibe/cli/feature_flags), weil Transcribe/TTS/Narrator noch
+    # auf Mistral zeigen. Die bestehenden Voice-/Narrator-Tests pruefen die
+    # Mechanik fuer den spaeteren Adacor-Voice-Pfad — dafuer den Schalter im
+    # Test aktivieren. Das Prod-Default (aus) deckt test_voice_features_flag ab.
+    monkeypatch.setattr("vibe.cli.feature_flags.VOICE_FEATURES_ENABLED", True)
+
+
+@pytest.fixture(autouse=True)
 def tmp_working_directory(
     monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.TempPathFactory
 ) -> Path:

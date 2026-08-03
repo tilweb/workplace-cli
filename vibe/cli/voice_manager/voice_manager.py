@@ -3,6 +3,7 @@ from __future__ import annotations
 from asyncio import CancelledError, create_task, wait_for
 from typing import TYPE_CHECKING
 
+from vibe.cli.feature_flags import voice_features_enabled
 from vibe.cli.voice_manager.telemetry import TranscriptionTrackingState
 from vibe.cli.voice_manager.voice_manager_port import (
     RecordingStartError,
@@ -55,7 +56,8 @@ class VoiceManager:
 
     @property
     def is_enabled(self) -> bool:
-        return self._config_getter().voice_mode_enabled
+        # === ADACOR PATCH: Voice ausgeblendet (siehe feature_flags) ===
+        return voice_features_enabled() and self._config_getter().voice_mode_enabled
 
     @property
     def transcribe_state(self) -> TranscribeState:
@@ -81,6 +83,10 @@ class VoiceManager:
         return VoiceToggleResult(enabled=new_state)
 
     def start_recording(self, mode: RecordingMode = RecordingMode.STREAM) -> None:
+        # === ADACOR PATCH: kein Audio-Egress solange Voice auf Mistral zeigt ===
+        if not voice_features_enabled():
+            raise RecordingStartError("Voice mode is not available")
+
         if self._transcribe_state != TranscribeState.IDLE:
             return
 

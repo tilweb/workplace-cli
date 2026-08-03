@@ -4,6 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 import sys
 
+from vibe.cli.feature_flags import voice_features_enabled
 from vibe.cli.plan_offer.decide_plan_offer import PlanInfo
 
 ALT_KEY = "⌥" if sys.platform == "darwin" else "Alt"
@@ -152,6 +153,8 @@ class CommandRegistry:
                 aliases=frozenset(["/voice"]),
                 description="Configure voice settings",
                 handler="_show_voice_settings",
+                # === ADACOR PATCH: ausgeblendet solange Voice auf Mistral zeigt ===
+                is_available=lambda _ctx: voice_features_enabled(),
             ),
             "leanstall": Command(
                 aliases=frozenset(["/leanstall"]),

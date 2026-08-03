@@ -1,7 +1,7 @@
 ---
-name: Mistral Vibe
-description: "Download, install, and run Mistral Vibe"
-author: Mistral AI
+name: Workplace CLI
+description: "Download, install, and run Workplace CLI (Adacor)"
+author: Adacor
 
 inputs:
   prompt:
@@ -9,8 +9,8 @@ inputs:
     required: true
     default: |
       You are a helpful assistant
-  MISTRAL_API_KEY:
-    description: API Key for AI Studio
+  ADACOR_AI_API_KEY:
+    description: API Key for Adacor AI
     required: true
   install_python:
     description: |
@@ -40,20 +40,20 @@ runs:
     - name: Install uv
       uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7
 
-    - name: Install Mistral Vibe
+    - name: Install Workplace CLI
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
         uv sync --locked --all-extras --dev
 
-    - name: Run Mistral Vibe
-      id: run-mistral-vibe
+    - name: Run Workplace CLI
+      id: run-workplace-cli
       shell: bash
       working-directory: ${{ github.action_path }}
       env:
-        MISTRAL_API_KEY: "${{ inputs.MISTRAL_API_KEY }}"
+        ADACOR_AI_API_KEY: "${{ inputs.ADACOR_AI_API_KEY }}"
         PROMPT_INPUT: "${{ inputs.prompt }}"
       run: |
         cd "${{ github.workspace }}"
-        uv run --directory "${{ github.action_path }}" vibe \
+        uv run --directory "${{ github.action_path }}" workplace \
           -p "$PROMPT_INPUT"

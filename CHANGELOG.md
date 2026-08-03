@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Voice & Narrator ausgeblendet (Audit #3)**
 - Voice-Mode, Voice-Transcribe und Narrator (Turn-Summary + TTS) sind hartkodiert gegen `api.mistral.ai` (Mistral-SDK-Realtime bzw. Mistral-Chat-Modell). Bis der Adacor-Voice-Pfad steht (Adacor-Whisper vorhanden, TTS noch nicht), werden sie hinter `VOICE_FEATURES_ENABLED=False` (`vibe/cli/feature_flags.py`) vollstaendig deaktiviert und aus der UI ausgeblendet (`/voice`-Command versteckt, `VoiceManager.is_enabled`/`start_recording` und `NarratorManager` inert) — kein Audio-/Turn-Egress an Mistral mehr, auch nicht bei hand-editierter `config.toml`. Reaktivierung per Schalter (setzt Adacor-Clients voraus).
 
+**GitHub Action rebrandet (Audit #4)**
+- `action.yml` von „Mistral Vibe"/`MISTRAL_API_KEY`/`vibe -p` auf „Workplace CLI"/`ADACOR_AI_API_KEY`/`workplace -p` umgestellt.
+
 **Update-Check: `workplace --check-update` (P3)**
 - Neues Flag `workplace --check-update` prueft synchron gegen die GitHub-Releases von `tilweb/workplace-cli` und beendet sich mit Terminal-Ausgabe (verfuegbar / aktuell / Fehler); umgeht den 24h-Cache, damit der explizite Check immer frisch ist
 - Env-Opt-out `WORKPLACE_NO_UPDATE_CHECK=1` schaltet den automatischen Start-Check ab; das explizite Flag laeuft trotzdem

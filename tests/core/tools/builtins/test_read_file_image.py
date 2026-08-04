@@ -70,10 +70,10 @@ async def test_read_image_attaches_data_url(tmp_path: Path) -> None:
     result = await collect_result(tool.run(ReadFileArgs(path=str(img))))
 
     assert isinstance(result, ReadFileResult)
-    assert result.image_url is not None
-    assert result.image_url.startswith("data:image/png;base64,")
+    assert result.image_urls is not None
+    assert result.image_urls[0].startswith("data:image/png;base64,")
     assert "pic.png" in result.content
-    assert tool.get_result_images(result) == [result.image_url]
+    assert tool.get_result_images(result) == result.image_urls
 
 
 @pytest.mark.asyncio
@@ -86,7 +86,7 @@ async def test_image_url_excluded_from_model_dump(tmp_path: Path) -> None:
     result = await collect_result(tool.run(ReadFileArgs(path=str(img))))
 
     # The base64 must not leak into the text serialization sent to the LLM.
-    assert "image_url" not in result.model_dump()
+    assert "image_urls" not in result.model_dump()
 
 
 @pytest.mark.asyncio
@@ -98,7 +98,7 @@ async def test_read_text_file_has_no_image(tmp_path: Path) -> None:
 
     result = await collect_result(tool.run(ReadFileArgs(path=str(txt))))
 
-    assert result.image_url is None
+    assert result.image_urls is None
     assert tool.get_result_images(result) is None
     assert "hello world" in result.content
 
@@ -115,7 +115,7 @@ async def test_oversized_image_not_attached(
 
     result = await collect_result(tool.run(ReadFileArgs(path=str(img))))
 
-    assert result.image_url is None
+    assert result.image_urls is None
     assert "could not be attached" in result.content
 
 

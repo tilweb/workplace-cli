@@ -56,9 +56,9 @@ Mit einem vision-fähigen Modell (Default `qwen3.5-35b`) kann der Agent Bilder s
 @screenshot.png Was ist auf dem Bild? Wo ist der Fehler?
 ```
 
-Der Agent kann Bilddateien auch **selbst** öffnen: `read_file` auf eine Bilddatei liefert das Bild als Vision-Input (z.B. „Schau dir `@diagramm.png` an und erkläre es").
+Der Agent kann Bild- und **PDF-Dateien** auch **selbst** öffnen: `read_file` auf eine Bild- oder PDF-Datei liefert sie als Vision-Input (z.B. „Schau dir `@bericht.pdf` an und fasse Seite 1 zusammen"). PDF-Seiten werden zu Bildern gerendert (erste 10 Seiten).
 
-Unterstützt: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` (bis 10 MB). Bei einem Text-Modell werden Bilder ignoriert (mit Log-Hinweis). PDF-/Dokument-Lesen folgt.
+Unterstützt: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` (bis 10 MB) und `.pdf` (bis 25 MB). Bei einem Text-Modell werden Bilder/PDFs ignoriert (mit Log-Hinweis).
 
 ### Eigene Provider / Modelle hinzufügen
 

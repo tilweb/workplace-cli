@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**PDF/Dokumente lesen (Vision Phase 3)**
+- `read_file` auf eine `.pdf`-Datei rendert die Seiten zu Bildern (via `pypdfium2` + `Pillow`, beide permissiv lizenziert — bewusst **nicht** PyMuPDF wegen AGPL) und hängt sie als Vision-Input an. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (PDF mit Text „BANANE" → korrekt gelesen).
+- Cap: erste 10 Seiten (`MAX_PDF_PAGES`), Render-Scale 2×, PDF >25 MB werden übersprungen. Neu: `vibe/core/utils/documents.py`; `ReadFileResult.image_urls` (Liste, für mehrseitige Dokumente). Neue Dependencies: `pypdfium2`, `pillow`.
+
 **Bilder lesen via `read_file` (Vision Phase 2)**
 - Der Agent kann Bilddateien jetzt selbst „lesen": `read_file` auf eine `.png/.jpg/.jpeg/.gif/.webp`-Datei liefert das Bild als Vision-Input (statt Text) — es wird als `image_url` an die `role=tool`-Antwortnachricht gehängt. Adacor akzeptiert Bilder in Tool-Rollen (getestet), daher kein Injektions-Umweg nötig. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (grünes Bild → „Grün").
 - Neuer Tool-Hook `BaseTool.get_result_images()`; `ReadFileResult.image_url` (aus der Text-Serialisierung ausgeschlossen, damit kein base64 in den Prompt läuft); Vision-Guard greift auch hier (Text-Modelle bekommen nur den Platzhalter). Bilder >10 MB werden übersprungen.

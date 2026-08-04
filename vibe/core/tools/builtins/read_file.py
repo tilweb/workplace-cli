@@ -22,6 +22,7 @@ from vibe.core.tools.ui import ToolCallDisplay, ToolResultDisplay, ToolUIData
 from vibe.core.tools.utils import resolve_file_tool_permission
 from vibe.core.types import ToolStreamEvent
 from vibe.core.utils import VIBE_WARNING_TAG
+from vibe.core.utils.documents import is_pdf_path, render_pdf_to_data_urls
 from vibe.core.utils.images import build_image_data_url, is_image_path
 from vibe.core.utils.io import decode_safe
 
@@ -54,9 +55,9 @@ class ReadFileResult(BaseModel):
     was_truncated: bool = Field(
         description="True if the reading was stopped due to the max_read_bytes limit."
     )
-    # === ADACOR PATCH: image data URL (excluded from the text sent to the LLM;
-    # attached as an image part on the tool message via get_result_images) ===
-    image_url: str | None = Field(default=None, exclude=True)
+    # === ADACOR PATCH: image data URLs (excluded from the text sent to the LLM;
+    # attached as image parts on the tool message via get_result_images) ===
+    image_urls: list[str] | None = Field(default=None, exclude=True)
 
 
 class ReadFileToolConfig(BaseToolConfig):
@@ -81,8 +82,9 @@ class ReadFile(
 ):
     description: ClassVar[str] = (
         "Read a file. Text files return their content from a specific line range "
-        "(byte-capped for safety). Image files (png/jpg/jpeg/gif/webp) are attached "
-        "as visual input for vision-capable models."
+        "(byte-capped for safety). Image files (png/jpg/jpeg/gif/webp) and PDFs "
+        "are attached as visual input for vision-capable models (PDF pages are "
+        "rendered to images)."
     )
 
     @final
@@ -91,7 +93,7 @@ class ReadFile(
     ) -> AsyncGenerator[ToolStreamEvent | ReadFileResult, None]:
         file_path = self._prepare_and_validate_path(args)
 
-        # === ADACOR PATCH: images are attached, not read as text ===
+        # === ADACOR PATCH: images/PDFs are attached as visual input, not text ===
         if is_image_path(file_path):
             data_url = build_image_data_url(file_path)
             if data_url is None:
@@ -108,7 +110,28 @@ class ReadFile(
                 content=f"[Image attached: {file_path.name}]",
                 lines_read=0,
                 was_truncated=False,
-                image_url=data_url,
+                image_urls=[data_url],
+            )
+            return
+
+        if is_pdf_path(file_path):
+            pages = render_pdf_to_data_urls(file_path)
+            if not pages:
+                yield ReadFileResult(
+                    path=str(file_path),
+                    content=f"[PDF could not be rendered (too large, corrupt, or "
+                    f"unreadable): {file_path.name}]",
+                    lines_read=0,
+                    was_truncated=False,
+                )
+                return
+            yield ReadFileResult(
+                path=str(file_path),
+                content=f"[PDF attached as {len(pages)} page image(s): "
+                f"{file_path.name}]",
+                lines_read=0,
+                was_truncated=False,
+                image_urls=pages,
             )
             return
 
@@ -123,7 +146,7 @@ class ReadFile(
         )
 
     def get_result_images(self, result: ReadFileResult) -> list[str] | None:
-        return [result.image_url] if result.image_url else None
+        return result.image_urls or None
 
     def resolve_permission(self, args: ReadFileArgs) -> PermissionContext | None:
         return resolve_file_tool_permission(

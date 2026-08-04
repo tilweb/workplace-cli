@@ -87,9 +87,7 @@ class OpenAIAdapter(APIAdapter):
         parts: list[dict[str, Any]] = []
         if text := msg_dict.get("content"):
             parts.append({"type": "text", "text": text})
-        parts.extend(
-            {"type": "image_url", "image_url": {"url": url}} for url in images
-        )
+        parts.extend({"type": "image_url", "image_url": {"url": url}} for url in images)
         msg_dict["content"] = parts
         return msg_dict
 

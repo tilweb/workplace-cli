@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Bild-Input / Vision (Phase 1)**
+- Der Agent kann jetzt Bilder „sehen": eine per `@bild.png` gementionte Bilddatei (`.png/.jpg/.jpeg/.gif/.webp`) wird als Vision-Input an die User-Nachricht angehängt (base64 `image_url`, OpenAI-Multimodal-Konvention) und vom generischen (Adacor-)Backend entsprechend serialisiert. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (rotes Testbild → „Rot").
+- Nur an vision-fähige Modelle (`ModelConfig.supports_vision`, gesetzt für `qwen3.5-35b`); bei Text-Modellen werden Bilder mit Warn-Log verworfen statt an die API geschickt. Bilder >10 MB werden übersprungen.
+- Neu: `vibe/core/utils/images.py`; `LLMMessage.images`; `OpenAIAdapter._images_to_api`; Guard `AgentLoop._images_for_active_model`; Ingestion in `app.py`. (Dokument-/PDF-Lesen und ACP-Bilder folgen in weiteren Phasen.)
+
 **Default-Modell auf `qwen3.5-35b` (Vision-fähig)**
 - Default-Modell von `qwen3-30b` (Text) auf `qwen3-5-a3b-35b-256k` (Alias `qwen3.5-35b`) umgestellt. Per curl gegen Adacor verifiziert: das Modell erkennt Bildinhalte korrekt (rotes Testbild → „Rot") und der Endpoint akzeptiert OpenAI-Style `image_url`-Parts — Voraussetzung fuer die kommende Bild-/Dokument-Unterstuetzung (Vision).
 

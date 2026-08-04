@@ -34,6 +34,7 @@ from vibe.core.llm.format import (
     ResolvedToolCall,
 )
 from vibe.core.llm.types import BackendLike
+from vibe.core.logger import logger
 from vibe.core.middleware import (
     CHAT_AGENT_EXIT,
     CHAT_AGENT_REMINDER,
@@ -553,7 +554,10 @@ class AgentLoop:
 
     @requires_init
     async def act(
-        self, msg: str, client_message_id: str | None = None
+        self,
+        msg: str,
+        client_message_id: str | None = None,
+        images: list[str] | None = None,
     ) -> AsyncGenerator[BaseEvent, None]:
         self._clean_message_history()
         self.rewind_manager.create_checkpoint()
@@ -563,7 +567,7 @@ class AgentLoop:
             model_name = None
         async with agent_span(model=model_name, session_id=self.session_id):
             async for event in self._conversation_loop(
-                msg, client_message_id=client_message_id
+                msg, client_message_id=client_message_id, images=images
             ):
                 yield event
 
@@ -743,11 +747,36 @@ class AgentLoop:
         headers["x-affinity"] = self.session_id
         return headers
 
+    def _images_for_active_model(self, images: list[str] | None) -> list[str] | None:
+        # === ADACOR PATCH: only attach images to a vision-capable model ===
+        if not images:
+            return None
+        try:
+            model = self.config.get_active_model()
+        except ValueError:
+            return None
+        if not model.supports_vision:
+            logger.warning(
+                "Dropping %d image attachment(s): active model %r is not "
+                "vision-capable",
+                len(images),
+                model.alias,
+            )
+            return None
+        return images
+
     async def _conversation_loop(
-        self, user_msg: str, client_message_id: str | None = None
+        self,
+        user_msg: str,
+        client_message_id: str | None = None,
+        images: list[str] | None = None,
     ) -> AsyncGenerator[BaseEvent]:
+        images = self._images_for_active_model(images)
         user_message = LLMMessage(
-            role=Role.user, content=user_msg, message_id=client_message_id
+            role=Role.user,
+            content=user_msg,
+            images=images,
+            message_id=client_message_id,
         )
         self.messages.append(user_message)
         self.stats.steps += 1

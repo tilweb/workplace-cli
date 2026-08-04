@@ -376,6 +376,8 @@ class ModelConfig(BaseModel):
     output_price: float = 0.0  # Price per million output tokens
     thinking: ThinkingLevel = "off"
     auto_compact_threshold: int = 200_000
+    # === ADACOR PATCH: whether the model accepts image inputs (vision) ===
+    supports_vision: bool = False
 
     _default_alias_to_name = model_validator(mode="before")(_default_alias_to_name)
 
@@ -454,6 +456,7 @@ DEFAULT_MODELS = [
         alias="qwen3.5-35b",
         input_price=0.0,
         output_price=0.0,
+        supports_vision=True,
     ),
     # Mistral-Modelle entfernt (mistral-medium-3.5, devstral-small) — nicht mehr
     # im Modell-Picker.

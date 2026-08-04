@@ -17,8 +17,12 @@ def merge_consecutive_user_messages(messages: Sequence[LLMMessage]) -> list[LLMM
             prev_content = result[-1].content or ""
             curr_content = msg.content or ""
             merged_content = f"{prev_content}\n\n{curr_content}".strip()
+            merged_images = (result[-1].images or []) + (msg.images or []) or None
             result[-1] = LLMMessage(
-                role=Role.user, content=merged_content, message_id=result[-1].message_id
+                role=Role.user,
+                content=merged_content,
+                images=merged_images,
+                message_id=result[-1].message_id,
             )
         else:
             result.append(msg)

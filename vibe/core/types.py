@@ -206,6 +206,11 @@ class LLMMessage(BaseModel):
 
     role: Role
     content: Content | None = None
+    # === ADACOR PATCH: multimodal image parts (data URLs) on a message ===
+    # Kept separate from `content` (which stays a string throughout the stack).
+    # The generic backend folds these into an OpenAI-style multimodal content
+    # array at request time; other surfaces keep treating `content` as text.
+    images: list[str] | None = None
     injected: bool = False
     reasoning_content: Content | None = None
     reasoning_state: list[str] | None = None
@@ -232,6 +237,7 @@ class LLMMessage(BaseModel):
         return {
             "role": role,
             "content": getattr(v, "content", ""),
+            "images": getattr(v, "images", None),
             "reasoning_content": reasoning_content,
             "reasoning_state": getattr(v, "reasoning_state", None),
             "reasoning_signature": getattr(v, "reasoning_signature", None),
@@ -299,9 +305,12 @@ class LLMMessage(BaseModel):
                     )
                     tool_calls_map[tc.index].function.arguments = new_args
 
+        images = (self.images or []) + (other.images or []) or None
+
         return LLMMessage(
             role=self.role,
             content=content,
+            images=images,
             reasoning_content=reasoning_content,
             reasoning_state=reasoning_state,
             reasoning_signature=reasoning_signature,

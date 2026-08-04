@@ -79,6 +79,20 @@ class OpenAIAdapter(APIAdapter):
             msg_dict["reasoning_content"] = msg_dict.pop(field_name)
         return msg_dict
 
+    # === ADACOR PATCH: fold image parts into OpenAI multimodal content ===
+    def _images_to_api(self, msg_dict: dict[str, Any]) -> dict[str, Any]:
+        images = msg_dict.pop("images", None)
+        if not images:
+            return msg_dict
+        parts: list[dict[str, Any]] = []
+        if text := msg_dict.get("content"):
+            parts.append({"type": "text", "text": text})
+        parts.extend(
+            {"type": "image_url", "image_url": {"url": url}} for url in images
+        )
+        msg_dict["content"] = parts
+        return msg_dict
+
     def prepare_request(
         self,
         *,
@@ -96,17 +110,19 @@ class OpenAIAdapter(APIAdapter):
         merged_messages = merge_consecutive_user_messages(messages)
         field_name = provider.reasoning_field_name
         converted_messages = [
-            self._reasoning_to_api(
-                msg.model_dump(
-                    exclude_none=True,
-                    exclude={
-                        "message_id",
-                        "reasoning_message_id",
-                        "reasoning_state",
-                        "injected",
-                    },
-                ),
-                field_name,
+            self._images_to_api(
+                self._reasoning_to_api(
+                    msg.model_dump(
+                        exclude_none=True,
+                        exclude={
+                            "message_id",
+                            "reasoning_message_id",
+                            "reasoning_state",
+                            "injected",
+                        },
+                    ),
+                    field_name,
+                )
             )
             for msg in merged_messages
         ]

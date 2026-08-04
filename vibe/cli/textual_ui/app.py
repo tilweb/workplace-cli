@@ -178,6 +178,7 @@ from vibe.core.utils import (
     get_user_cancellation_message,
     is_dangerous_directory,
 )
+from vibe.core.utils.images import build_image_data_url, is_image_path
 
 
 def _compute_connectors_count(
@@ -1339,10 +1340,22 @@ class VibeApp(App):  # noqa: PLR0904
                     message_id=message_id,
                 )
             rendered_prompt = render_path_prompt(prompt, base_dir=Path.cwd())
+            # === ADACOR PATCH: attach @-mentioned image files as vision input ===
+            image_urls = [
+                url
+                for r in prompt_payload.all_resources
+                if r.kind == "file"
+                and is_image_path(r.path)
+                and (url := build_image_data_url(r.path)) is not None
+            ]
             self._narrator_manager.cancel()
             self._narrator_manager.on_turn_start(rendered_prompt)
             async with aclosing(
-                self.agent_loop.act(rendered_prompt, client_message_id=message_id)
+                self.agent_loop.act(
+                    rendered_prompt,
+                    client_message_id=message_id,
+                    images=image_urls or None,
+                )
             ) as events:
                 await self._handle_agent_loop_events(events)
         except asyncio.CancelledError:

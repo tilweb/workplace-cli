@@ -48,6 +48,16 @@ Beim Aufruf von `/model` listet die TUI Modelle gruppiert nach Provider:
 
 Discovered Modelle sind im Picker mit `· live` markiert. Die Liste wird in `~/.workplace-cli/models-cache.json` gecached (TTL 1h, override via `WORKPLACE_MODEL_CACHE_TTL_SEC=<sec>`); beim Öffnen von `/model` läuft im Hintergrund ein Refresh. Nur das ausgewählte Modell-Alias wandert nach `config.toml` — die Modell-Liste selbst nicht.
 
+### Bilder anhängen (Vision)
+
+Mit einem vision-fähigen Modell (Default `qwen3.5-35b`) kann der Agent Bilder sehen. Referenziere eine Bilddatei per `@`-Mention im Prompt:
+
+```
+@screenshot.png Was ist auf dem Bild? Wo ist der Fehler?
+```
+
+Unterstützt: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` (bis 10 MB). Bei einem Text-Modell werden angehängte Bilder ignoriert (mit Log-Hinweis). PDF-/Dokument-Lesen folgt.
+
 ### Eigene Provider / Modelle hinzufügen
 
 Adacor-Modelle (live von `api.adacor.ai`) und ein lokal laufender Ollama werden automatisch entdeckt — dafür ist **kein** Config-Edit nötig. Möchtest du einen **anderen** OpenAI-kompatiblen Endpoint anbinden (LM Studio, ein internes LLM, ein Remote-Gateway), trägst du ihn in `~/.workplace-cli/config.toml` ein:

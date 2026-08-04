@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Fix: „What's new"-Banner zeigte Upstream-Inhalt**
+- `whats_new.md` trug noch den Mistral-Vibe-v2.9.4-Text (`/rename` etc.) und wurde so beim Update angezeigt. Ersetzt durch die echten Workplace-1.1-Highlights (Vision, Drag-to-Attach, Mistral raus, notify-only Update).
+
 ### [1.1.1] — 2026-08-04
 
 **Datei ins Eingabefeld ziehen (Drag-to-Attach, Vision Phase 4B)**

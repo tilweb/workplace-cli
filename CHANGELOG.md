@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.1.0] — 2026-08-04
+
+Basiert weiterhin auf Mistral Vibe v2.9.4. Highlights: Vision-Support (Bilder & PDFs), Mistral aus dem Modell-Picker entfernt, Default-Modell `qwen3.5-35b`, notify-only Update-Verhalten, plus mehrere Rebrand-/Prod-Fixes.
+
 **`web_fetch` auf http(s) beschränkt (kein `file://`-Prompt mehr)**
 - `web_fetch` lehnte `file://` zwar schon ab, zeigte aber vorher einen verwirrenden „fetching from file:"-Permission-Prompt (weil `_normalize_url` `file:///x` zu `https://file:...` verhunzte). Jetzt: explizite Nicht-http(s)-Schemes werden nicht mehr umgeschrieben, kein Prompt, sofortiger klarer Fehler „Invalid URL scheme". Bare `host:port` (z.B. `example.com:8080`) bekommt weiterhin `https://`. Beschreibung ergänzt: für lokale Dateien `read_file` nutzen.
 

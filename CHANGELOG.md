@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.1.1] — 2026-08-04
+
 **Datei ins Eingabefeld ziehen (Drag-to-Attach, Vision Phase 4B)**
 - Wird eine Datei ins Eingabefeld gezogen (das Terminal fügt ihren Pfad ein), wird sie automatisch als `@`-Mention eingefügt und damit angehängt — sichtbar im Feld. Genau **eine** Datei: Ordner und Mehrfachauswahl werden abgefangen (mit Hinweis). Pfade mit Leerzeichen werden korrekt gequotet.
 

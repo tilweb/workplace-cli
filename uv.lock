@@ -3,7 +3,7 @@ revision = 3
 requires-python = ">=3.12"
 
 [options]
-exclude-newer = "2026-07-28T14:44:03.4282Z"
+exclude-newer = "2026-07-28T21:03:36.192212Z"
 exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
@@ -2274,7 +2274,7 @@ wheels = [
 
 [[package]]
 name = "workplace-cli"
-version = "1.1.1"
+version = "1.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "agent-client-protocol" },

@@ -1,6 +1,6 @@
 [project]
 name = "workplace-cli"
-version = "1.1.1"
+version = "1.1.2"
 description = "Adacor Workplace CLI — Coding Agent powered by Adacor AI (fork of mistral-vibe)"
 readme = "README.md"
 requires-python = ">=3.12"

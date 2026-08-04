@@ -573,18 +573,6 @@ class TestAutoCompactThresholdFallback:
 
 
 class TestDefaultProviderConfig:
-    def test_default_mistral_provider_is_mistral_backend(self) -> None:
-        provider = _default_provider("mistral")
-
-        assert provider.name == "mistral"
-        assert provider.backend.value == "mistral"
-        assert provider.browser_auth_base_url == DEFAULT_MISTRAL_BROWSER_AUTH_BASE_URL
-        assert (
-            provider.browser_auth_api_base_url
-            == DEFAULT_MISTRAL_BROWSER_AUTH_API_BASE_URL
-        )
-        assert provider.supports_browser_sign_in is True
-
     def test_non_mistral_provider_does_not_inherit_browser_auth_defaults(self) -> None:
         provider = _default_provider("llamacpp")
 

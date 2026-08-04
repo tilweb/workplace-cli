@@ -433,15 +433,10 @@ DEFAULT_PROVIDERS = [
         api_key_env_var=DEFAULT_ADACOR_API_ENV_KEY,
         backend=Backend.GENERIC,
     ),
+    # Mistral als Default-Provider entfernt — nicht mehr im Modell-Picker.
+    # (Mistral-Backend-Code bleibt; wer will, kann Mistral per config.toml
+    # wieder als [[providers]] hinzufuegen.)
     # === ADACOR PATCH END ===
-    ProviderConfig(
-        name="mistral",
-        api_base=f"{_DEFAULT_MISTRAL_SERVER_URL}/v1",
-        api_key_env_var=DEFAULT_MISTRAL_API_ENV_KEY,
-        browser_auth_base_url=DEFAULT_MISTRAL_BROWSER_AUTH_BASE_URL,
-        browser_auth_api_base_url=DEFAULT_MISTRAL_BROWSER_AUTH_API_BASE_URL,
-        backend=Backend.MISTRAL,
-    ),
     ProviderConfig(
         name="llamacpp",
         api_base="http://127.0.0.1:8080/v1",
@@ -460,23 +455,9 @@ DEFAULT_MODELS = [
         input_price=0.0,
         output_price=0.0,
     ),
+    # Mistral-Modelle entfernt (mistral-medium-3.5, devstral-small) — nicht mehr
+    # im Modell-Picker.
     # === ADACOR PATCH END ===
-    ModelConfig(
-        name="mistral-vibe-cli-latest",
-        provider="mistral",
-        alias="mistral-medium-3.5",
-        temperature=1.0,
-        input_price=1.5,
-        output_price=7.5,
-        thinking="high",
-    ),
-    ModelConfig(
-        name="devstral-small-latest",
-        provider="mistral",
-        alias="devstral-small",
-        input_price=0.1,
-        output_price=0.3,
-    ),
     ModelConfig(
         name="devstral",
         provider="llamacpp",

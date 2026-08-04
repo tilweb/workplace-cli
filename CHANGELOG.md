@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Mistral aus dem Modell-Picker entfernt**
+- `mistral` ist kein Default-Provider mehr (`DEFAULT_PROVIDERS`), die Mistral-Modelle (`mistral-medium-3.5`, `devstral-small`) sind aus `DEFAULT_MODELS` raus. `/model` zeigt nur noch Adacor (+ discovered) und `llamacpp`/`local`. Mistral-Backend-Code bleibt; wer will, kann Mistral per `config.toml` (`[[providers]]`) wieder hinzufügen.
+- Onboarding-Fallback zeigt jetzt auf den Default-Provider (adacor) statt Mistral (behebt zugleich einen `StopIteration`-Crash, da der bisherige Fallback den entfernten Mistral-Default suchte).
+
 **Kritisch: frischer Install crasht durch `mcp 2.0.0`**
 - `pyproject.toml` hatte `mcp>=1.14.0` ohne Obergrenze. Ein frischer `uv tool install git+…/workplace-cli` (der README-Weg) zieht `mcp 2.0.0`, wo `streamablehttp_client` umbenannt wurde → `ImportError` beim Start, CLI unbrauchbar. Von der vollen Test-Suite (`test_cli_tui_fresh_install`) aufgedeckt. Gecappt auf `mcp>=1.14.0,<2`.
 

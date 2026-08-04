@@ -224,7 +224,7 @@ async def test_compact_uses_compaction_model() -> None:
     """When compaction_model is set, compact() uses it instead of active_model."""
     compaction = ModelConfig(
         name="compaction-model",
-        provider="mistral",
+        provider="adacor",
         alias="compaction",
         auto_compact_threshold=1,
     )
@@ -233,7 +233,7 @@ async def test_compact_uses_compaction_model() -> None:
         [mock_llm_chunk(content="<final>")],
     ])
     cfg = build_test_vibe_config(
-        active_model="devstral-small",
+        active_model="qwen3-30b",
         models=make_test_models(auto_compact_threshold=1),
         compaction_model=compaction,
         providers=DEFAULT_PROVIDERS,

@@ -65,10 +65,12 @@ def persist_api_key(
     return "completed"
 
 
-def _get_mistral_provider() -> ProviderConfig:
-    return next(
-        provider for provider in DEFAULT_PROVIDERS if provider.name == "mistral"
-    )
+def _get_default_provider() -> ProviderConfig:
+    # === ADACOR PATCH: Fallback auf Default-Provider (adacor) statt Mistral ===
+    # Mistral ist nicht mehr in DEFAULT_PROVIDERS. Braucht der aufgeloeste
+    # Provider keinen Key (z.B. llamacpp/ollama), fragt das Onboarding den Key
+    # des Default-Providers ab, statt auf Mistral zu zeigen.
+    return DEFAULT_PROVIDERS[0]
 
 
 def _resolve_onboarding_provider(
@@ -77,7 +79,7 @@ def _resolve_onboarding_provider(
     resolved_provider = provider or OnboardingContext.load().provider
     if resolved_provider.api_key_env_var:
         return resolved_provider
-    return _get_mistral_provider()
+    return _get_default_provider()
 
 
 class ApiKeyScreen(OnboardingScreen):

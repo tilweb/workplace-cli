@@ -528,7 +528,10 @@ class VibeConfig(BaseSettings):
     include_project_context: bool = True
     include_prompt_detail: bool = True
     enable_update_checks: bool = True
-    enable_auto_update: bool = True
+    # === ADACOR PATCH: notify-only statt stillem Self-Upgrade ===
+    # Der Update-Check bleibt an (Banner-Hinweis), aber die App fuehrt NICHT
+    # ungefragt `brew/uv upgrade` aus — der User startet das Update selbst.
+    enable_auto_update: bool = False
     enable_notifications: bool = True
     api_timeout: float = 720.0
     auto_compact_threshold: int = 200_000

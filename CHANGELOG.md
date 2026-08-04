@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Update: notify-only statt stillem Self-Upgrade**
+- `enable_auto_update` Default auf `false`. Der Update-Check beim Start bleibt an und zeigt bei neuer Version einen Hinweis mit Upgrade-Befehl (`brew upgrade workplace-cli` / `uv tool upgrade workplace-cli`) — die App führt aber **kein** ungefragtes `brew/uv upgrade` mehr im Hintergrund aus. Der User startet das Update selbst. (`do_update()` bleibt vorhanden; wer will, kann `enable_auto_update = true` in `config.toml` setzen.)
+
 **Mistral aus dem Modell-Picker entfernt**
 - `mistral` ist kein Default-Provider mehr (`DEFAULT_PROVIDERS`), die Mistral-Modelle (`mistral-medium-3.5`, `devstral-small`) sind aus `DEFAULT_MODELS` raus. `/model` zeigt nur noch Adacor (+ discovered) und `llamacpp`/`local`. Mistral-Backend-Code bleibt; wer will, kann Mistral per `config.toml` (`[[providers]]`) wieder hinzufügen.
 - Onboarding-Fallback zeigt jetzt auf den Default-Provider (adacor) statt Mistral (behebt zugleich einen `StopIteration`-Crash, da der bisherige Fallback den entfernten Mistral-Default suchte).

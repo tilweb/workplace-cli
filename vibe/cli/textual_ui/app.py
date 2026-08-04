@@ -3045,7 +3045,11 @@ class VibeApp(App):  # noqa: PLR0904
             )
             return
 
-        message = f"{update_message_prefix}\nPlease update workplace-cli with your package manager"
+        message = (
+            f"{update_message_prefix}\n"
+            "Update with: brew upgrade workplace-cli "
+            "(or: uv tool upgrade workplace-cli)"
+        )
 
         self.notify(
             message, title="Update available", severity="information", timeout=10

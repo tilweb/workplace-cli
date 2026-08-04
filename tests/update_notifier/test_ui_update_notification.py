@@ -98,7 +98,7 @@ async def test_ui_displays_update_notification(
     assert notification.title == "Update available"
     assert (
         notification.message
-        == "0.1.0 => 0.2.0\nPlease update workplace-cli with your package manager"
+        == "0.1.0 => 0.2.0\nUpdate with: brew upgrade workplace-cli (or: uv tool upgrade workplace-cli)"
     )
 
 
@@ -190,7 +190,7 @@ async def test_ui_does_show_toast_when_cache_entry_is_too_old(
     assert notification.title == "Update available"
     assert (
         notification.message
-        == "0.1.0 => 0.2.0\nPlease update workplace-cli with your package manager"
+        == "0.1.0 => 0.2.0\nUpdate with: brew upgrade workplace-cli (or: uv tool upgrade workplace-cli)"
     )
     assert notifier.fetch_update_calls == 1
 
@@ -385,5 +385,5 @@ async def test_ui_displays_update_notification_when_auto_update_fails(
     assert notification.title == "Update available"
     assert (
         notification.message
-        == "0.1.0 => 0.2.0\nPlease update workplace-cli with your package manager"
+        == "0.1.0 => 0.2.0\nUpdate with: brew upgrade workplace-cli (or: uv tool upgrade workplace-cli)"
     )

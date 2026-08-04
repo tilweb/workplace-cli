@@ -56,7 +56,7 @@ Mit einem vision-fähigen Modell (Default `qwen3.5-35b`) kann der Agent Bilder s
 @screenshot.png Was ist auf dem Bild? Wo ist der Fehler?
 ```
 
-Alternativ **die Datei ins Eingabefeld ziehen** — sie wird automatisch als `@`-Mention angehängt (genau eine Datei; Ordner/Mehrfachauswahl werden abgelehnt).
+Alternativ eine Datei **per Copy & Paste** ins Eingabefeld einfügen (in Finder Cmd+C, im Feld Cmd+V) — sie wird automatisch als `@`-Mention angehängt (genau eine Datei; Ordner/Mehrfachauswahl werden abgelehnt). Hinweis: Echtes **Drag & Drop** funktioniert nur in Terminals, die Datei-Drops als Paste senden (z.B. iTerm2) — **Terminal.app liefert Drops in der TUI nicht**, dort ist Copy & Paste der Weg.
 
 Der Agent kann Bild- und **PDF-Dateien** auch **selbst** öffnen: `read_file` auf eine Bild- oder PDF-Datei liefert sie als Vision-Input (z.B. „Schau dir `@bericht.pdf` an und fasse Seite 1 zusammen"). PDF-Seiten werden zu Bildern gerendert (erste 10 Seiten).
 

@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 **Fix: „What's new"-Banner zeigte Upstream-Inhalt**
-- `whats_new.md` trug noch den Mistral-Vibe-v2.9.4-Text (`/rename` etc.) und wurde so beim Update angezeigt. Ersetzt durch die echten Workplace-1.1-Highlights (Vision, Drag-to-Attach, Mistral raus, notify-only Update).
+- `whats_new.md` trug noch den Mistral-Vibe-v2.9.4-Text (`/rename` etc.) und wurde so beim Update angezeigt. Ersetzt durch die echten Workplace-1.1-Highlights (Vision, Datei-Anhang, Mistral raus, notify-only Update).
 
 ### [1.1.1] — 2026-08-04
 
-**Datei ins Eingabefeld ziehen (Drag-to-Attach, Vision Phase 4B)**
-- Wird eine Datei ins Eingabefeld gezogen (das Terminal fügt ihren Pfad ein), wird sie automatisch als `@`-Mention eingefügt und damit angehängt — sichtbar im Feld. Genau **eine** Datei: Ordner und Mehrfachauswahl werden abgefangen (mit Hinweis). Pfade mit Leerzeichen werden korrekt gequotet.
+**Datei per Copy & Paste anhängen (Vision Phase 4B)**
+- Wird eine Datei ins Eingabefeld eingefügt (das Terminal fügt beim Copy & Paste bzw. Drop ihren Pfad ein), wird sie automatisch als `@`-Mention eingefügt und damit angehängt — sichtbar im Feld. Genau **eine** Datei: Ordner und Mehrfachauswahl werden abgefangen (mit Hinweis); Pfade mit Leerzeichen werden gequotet. Greift über Textuals Paste-Event: Copy & Paste einer Datei funktioniert überall; echtes Drag & Drop nur in Terminals, die Drops als Paste senden (z.B. iTerm2) — **Terminal.app liefert TUI-Drops nicht**.
 
 ### [1.1.0] — 2026-08-04
 

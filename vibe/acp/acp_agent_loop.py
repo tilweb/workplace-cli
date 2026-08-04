@@ -1396,40 +1396,6 @@ class VibeAcpAgentLoop(AcpAgent):
             ),
         )
 
-    async def _handle_leanstall(
-        self, session: AcpSessionLoop, text_prompt: str, message_id: str
-    ) -> PromptResponse:
-        current = list(session.agent_loop.base_config.installed_agents)
-        if "lean" in current:
-            return await self._command_reply(
-                session, "Lean agent is already installed.", message_id
-            )
-
-        VibeConfig.save_updates({"installed_agents": [*current, "lean"]})
-        await self._reload_session_config(session)
-        await self._send_config_option_update(session)
-        return await self._command_reply(
-            session,
-            "Lean agent installed. Start a new session to switch to Lean mode.",
-            message_id,
-        )
-
-    async def _handle_unleanstall(
-        self, session: AcpSessionLoop, text_prompt: str, message_id: str
-    ) -> PromptResponse:
-        current = list(session.agent_loop.base_config.installed_agents)
-        if "lean" not in current:
-            return await self._command_reply(
-                session, "Lean agent is not installed.", message_id
-            )
-
-        VibeConfig.save_updates({
-            "installed_agents": [a for a in current if a != "lean"]
-        })
-        await self._reload_session_config(session)
-        await self._send_config_option_update(session)
-        return await self._command_reply(session, "Lean agent uninstalled.", message_id)
-
     async def _handle_data_retention(
         self, session: AcpSessionLoop, text_prompt: str, message_id: str
     ) -> PromptResponse:

@@ -71,16 +71,6 @@ def _build_commands() -> dict[str, AcpCommand]:
             handler="_handle_proxy_setup",
             input_hint="KEY value to set, KEY to unset, or empty for help",
         ),
-        "leanstall": AcpCommand(
-            name="leanstall",
-            description="Install the Lean 4 agent (leanstral)",
-            handler="_handle_leanstall",
-        ),
-        "unleanstall": AcpCommand(
-            name="unleanstall",
-            description="Uninstall the Lean 4 agent",
-            handler="_handle_unleanstall",
-        ),
         "data-retention": AcpCommand(
             name="data-retention",
             description="Show data retention information",

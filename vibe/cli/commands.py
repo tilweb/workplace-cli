@@ -156,16 +156,6 @@ class CommandRegistry:
                 # === ADACOR PATCH: ausgeblendet solange Voice auf Mistral zeigt ===
                 is_available=lambda _ctx: voice_features_enabled(),
             ),
-            "leanstall": Command(
-                aliases=frozenset(["/leanstall"]),
-                description="Install the Lean 4 agent (leanstral)",
-                handler="_install_lean",
-            ),
-            "unleanstall": Command(
-                aliases=frozenset(["/unleanstall"]),
-                description="Uninstall the Lean 4 agent",
-                handler="_uninstall_lean",
-            ),
             "rewind": Command(
                 aliases=frozenset(["/rewind"]),
                 description="Rewind to a previous message",

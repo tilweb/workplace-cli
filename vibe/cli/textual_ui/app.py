@@ -2003,28 +2003,6 @@ class VibeApp(App):  # noqa: PLR0904
                 )
             )
 
-    async def _install_lean(self, **kwargs: Any) -> None:
-        current = list(self.agent_loop.base_config.installed_agents)
-        if "lean" in current:
-            await self._mount_and_scroll(
-                UserCommandMessage("Lean agent is already installed.")
-            )
-            return
-        VibeConfig.save_updates({"installed_agents": sorted([*current, "lean"])})
-        await self._reload_config()
-
-    async def _uninstall_lean(self, **kwargs: Any) -> None:
-        current = list(self.agent_loop.base_config.installed_agents)
-        if "lean" not in current:
-            await self._mount_and_scroll(
-                UserCommandMessage("Lean agent is not installed.")
-            )
-            return
-        VibeConfig.save_updates({
-            "installed_agents": [a for a in current if a != "lean"]
-        })
-        await self._reload_config()
-
     async def _clear_history(self, **kwargs: Any) -> None:
         try:
             self._reset_ui_state()

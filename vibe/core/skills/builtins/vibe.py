@@ -68,7 +68,7 @@ file_watcher_for_autocomplete = false
 
 # Behavior
 bypass_tool_permissions = false    # Skip tool approval prompts
-system_prompt_id = "cli"          # System prompt: "cli", "lean", or custom .md filename
+system_prompt_id = "cli"          # System prompt: "cli" or a custom .md filename
 enable_telemetry = true
 enable_update_checks = true
 enable_auto_update = false
@@ -193,8 +193,8 @@ agent_paths = ["/path/to/custom/agents"]
 enabled_agents = ["default", "plan"]
 disabled_agents = ["auto-approve"]
 
-# Opt-in builtin agents (only affects agents with install_required=True, e.g. lean)
-installed_agents = ["lean"]
+# Opt-in builtin agents (only affects agents with install_required=True)
+installed_agents = []
 ```
 
 ### MCP Servers
@@ -350,8 +350,6 @@ There are two kinds of agents:
 - **plan**: Planning-focused agent
 - **accept-edits**: Auto-approves file edits but asks for other tools
 - **auto-approve**: Auto-approves all tool calls
-- **lean**: Specialized Lean 4 proof assistant. Not available by default — must be
-  installed with `/leanstall` (removed with `/unleanstall`)
 
 ### Subagents
 
@@ -378,8 +376,6 @@ Custom agents are TOML files in `~/.workplace-cli/agents/NAME.toml`.
 - `/rewind` - Rewind to a previous message
 - `/terminal-setup` - Configure Shift+Enter for newlines
 - `/proxy-setup` - Configure proxy and SSL certificate settings
-- `/leanstall` - Install the Lean 4 agent (leanstral)
-- `/unleanstall` - Uninstall the Lean 4 agent
 - `/data-retention` - Show data retention information
 - `/teleport` - Teleport session to Vibe Code (only available when Vibe Code is enabled)
 - `/exit` - Exit the application

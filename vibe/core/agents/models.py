@@ -41,7 +41,6 @@ class BuiltinAgentName(StrEnum):
     ACCEPT_EDITS = "accept-edits"
     AUTO_APPROVE = "auto-approve"
     EXPLORE = "explore"
-    LEAN = "lean"
 
 
 @dataclass(frozen=True)
@@ -148,51 +147,10 @@ EXPLORE = AgentProfile(
     overrides={"enabled_tools": ["grep", "read_file"], "system_prompt_id": "explore"},
 )
 
-LEAN = AgentProfile(
-    name=BuiltinAgentName.LEAN,
-    display_name="Lean",
-    description="Specialized mode for Lean 4 code analysis, proof assistance, and theorem proving",
-    safety=AgentSafety.NEUTRAL,
-    agent_type=AgentType.AGENT,
-    install_required=True,
-    overrides={
-        "system_prompt_id": "lean",
-        "active_model": "leanstral",
-        "providers": [
-            {
-                "name": "mistral-testing",
-                "api_base": "https://api.mistral.ai/v1",
-                "api_key_env_var": "MISTRAL_API_KEY",
-                "backend": "mistral",
-            }
-        ],
-        "models": [
-            {
-                "name": "labs-leanstral-2603",
-                "provider": "mistral-testing",
-                "alias": "leanstral",
-                "thinking": "high",
-                "temperature": 1.0,
-                "auto_compact_threshold": 168_000,
-            }
-        ],
-        "compaction_model": {
-            "name": "mistral-small-latest",
-            "provider": "mistral-testing",
-            "alias": "devstral-compact",
-            "temperature": 0.2,
-            "thinking": "off",
-        },
-        "tools": {"bash": {"default_timeout": 1200}},
-        "base_disabled": ["exit_plan_mode"],
-    },
-)
-
 BUILTIN_AGENTS: dict[str, AgentProfile] = {
     BuiltinAgentName.DEFAULT: DEFAULT,
     BuiltinAgentName.PLAN: PLAN,
     BuiltinAgentName.ACCEPT_EDITS: ACCEPT_EDITS,
     BuiltinAgentName.AUTO_APPROVE: AUTO_APPROVE,
     BuiltinAgentName.EXPLORE: EXPLORE,
-    BuiltinAgentName.LEAN: LEAN,
 }

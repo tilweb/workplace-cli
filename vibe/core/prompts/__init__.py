@@ -22,7 +22,6 @@ class SystemPrompt(Prompt):
     CLI = auto()
     EXPLORE = auto()
     TESTS = auto()
-    LEAN = auto()
 
 
 class UtilityPrompt(Prompt):

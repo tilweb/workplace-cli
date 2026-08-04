@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Mistral-Lean-Agent entfernt (`/leanstall`, `/unleanstall`)**
+- Der Upstream-Lean-4-Agent (Modell „leanstral", hartkodiert gegen `api.mistral.ai`) und seine Slash-Commands `/leanstall`/`/unleanstall` (TUI + ACP) sind entfernt — reines Mistral-Feature ohne Adacor-Bezug. Inkl. `lean.md`-Prompt, `SystemPrompt.LEAN`, Skill-Doku. Die generische `install_required`/`installed_agents`-Mechanik bleibt (nicht Mistral-spezifisch).
+
 **Fix: „What's new"-Banner zeigte Upstream-Inhalt**
 - `whats_new.md` trug noch den Mistral-Vibe-v2.9.4-Text (`/rename` etc.) und wurde so beim Update angezeigt. Ersetzt durch die echten Workplace-1.1-Highlights (Vision, Datei-Anhang, Mistral raus, notify-only Update).
 

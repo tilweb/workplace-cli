@@ -1027,8 +1027,15 @@ class AgentLoop:
             extra = tool_instance.get_result_extra(result_model)
             if extra:
                 text += "\n\n" + extra
+            images = tool_instance.get_result_images(result_model)
             self._handle_tool_response(
-                tool_call, text, "success", decision, result_dict, span=span
+                tool_call,
+                text,
+                "success",
+                decision,
+                result_dict,
+                span=span,
+                images=images,
             )
             yield ToolResultEvent(
                 tool_name=tool_call.tool_name,
@@ -1139,10 +1146,13 @@ class AgentLoop:
         decision: ToolDecision | None = None,
         result: dict[str, Any] | None = None,
         span: trace.Span | None = None,
+        images: list[str] | None = None,
     ) -> None:
         self.messages.append(
             LLMMessage.model_validate(
-                self.format_handler.create_tool_response_message(tool_call, text)
+                self.format_handler.create_tool_response_message(
+                    tool_call, text, self._images_for_active_model(images)
+                )
             )
         )
 

@@ -392,3 +392,12 @@ class BaseTool[
         file reads).  The default returns ``None`` (no annotation).
         """
         return None
+
+    def get_result_images(self, result: ToolResult) -> list[str] | None:
+        """Optional image data URLs attached to the tool result (vision).
+
+        Override to return ``data:`` image URLs that should be sent to the
+        model as image parts on the tool-response message (e.g. reading an
+        image file). The default returns ``None`` (text-only result).
+        """
+        return None

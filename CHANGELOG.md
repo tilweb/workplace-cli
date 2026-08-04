@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Bilder lesen via `read_file` (Vision Phase 2)**
+- Der Agent kann Bilddateien jetzt selbst „lesen": `read_file` auf eine `.png/.jpg/.jpeg/.gif/.webp`-Datei liefert das Bild als Vision-Input (statt Text) — es wird als `image_url` an die `role=tool`-Antwortnachricht gehängt. Adacor akzeptiert Bilder in Tool-Rollen (getestet), daher kein Injektions-Umweg nötig. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (grünes Bild → „Grün").
+- Neuer Tool-Hook `BaseTool.get_result_images()`; `ReadFileResult.image_url` (aus der Text-Serialisierung ausgeschlossen, damit kein base64 in den Prompt läuft); Vision-Guard greift auch hier (Text-Modelle bekommen nur den Platzhalter). Bilder >10 MB werden übersprungen.
+
 **Bild-Input / Vision (Phase 1)**
 - Der Agent kann jetzt Bilder „sehen": eine per `@bild.png` gementionte Bilddatei (`.png/.jpg/.jpeg/.gif/.webp`) wird als Vision-Input an die User-Nachricht angehängt (base64 `image_url`, OpenAI-Multimodal-Konvention) und vom generischen (Adacor-)Backend entsprechend serialisiert. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (rotes Testbild → „Rot").
 - Nur an vision-fähige Modelle (`ModelConfig.supports_vision`, gesetzt für `qwen3.5-35b`); bei Text-Modellen werden Bilder mit Warn-Log verworfen statt an die API geschickt. Bilder >10 MB werden übersprungen.

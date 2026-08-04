@@ -342,3 +342,19 @@ def test_merge_appends_only_new_providers_and_models() -> None:
     assert "llama3" in aliases
     assert "qwen2.5-coder" in aliases
     assert aliases.count("existing-alias") == 1  # idempotent
+
+
+@pytest.mark.parametrize(
+    ("model_id", "expected_vision"),
+    [
+        ("qwen3-5-a3b-35b-256k", True),
+        ("pixtral-12b-32k", True),
+        ("qwen3-a3b-30b-256k", False),
+        ("some-random-model", False),
+    ],
+)
+def test_discovered_model_vision_flag(model_id: str, expected_vision: bool) -> None:
+    from vibe.core.llm.model_discovery import _build_model_from_cache
+
+    model = _build_model_from_cache(model_id, "adacor")
+    assert model.supports_vision is expected_vision

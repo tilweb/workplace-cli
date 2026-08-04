@@ -446,6 +446,17 @@ DEFAULT_PROVIDERS = [
     ),
 ]
 
+# === ADACOR PATCH: bekannte vision-fähige Adacor-Modelle ===
+# Adacors /models-Endpoint meldet keine Vision-Fähigkeit, und discovered
+# Modelle bekommen `supports_vision` sonst nicht gesetzt. Diese Namen werden
+# sowohl in DEFAULT_MODELS als auch in der Model-Discovery als vision-fähig
+# markiert. Bei neuen Adacor-VL-Modellen hier ergänzen.
+VISION_CAPABLE_MODEL_NAMES = frozenset({
+    "qwen3-5-a3b-35b-256k",
+    "qwen3-5-a3b-35bthinking-256k",
+    "pixtral-12b-32k",
+})
+
 DEFAULT_MODELS = [
     # === ADACOR PATCH START: Default-Modelle bei Adacor ===
     # Erstes Modell wird DEFAULT_ACTIVE_MODEL. Weitere Adacor-Modelle bitte

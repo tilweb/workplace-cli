@@ -224,8 +224,14 @@ def _build_provider_from_cache(name: str, entry: CachedProvider) -> ProviderConf
 
 def _build_model_from_cache(model_id: str, provider_name: str) -> ModelConfig:
     from vibe.core.config import ModelConfig
+    from vibe.core.config._settings import VISION_CAPABLE_MODEL_NAMES
 
-    return ModelConfig(name=model_id, provider=provider_name, alias=model_id)
+    return ModelConfig(
+        name=model_id,
+        provider=provider_name,
+        alias=model_id,
+        supports_vision=model_id in VISION_CAPABLE_MODEL_NAMES,
+    )
 
 
 def merge_into_config(config: VibeConfig, cache: DiscoveryCache) -> None:

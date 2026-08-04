@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Fix: discovered Vision-Modelle wurden nicht als vision-fähig erkannt**
+- `supports_vision` war nur am hartkodierten Default gesetzt; ein via `/models`-Discovery geladenes (und im Picker gewähltes) `qwen3-5-a3b-35b-256k` galt als Text-Modell → der Vision-Guard verwarf Bilder/PDFs, das Modell sah nur den Platzhalter. Jetzt markiert eine kuratierte Menge (`VISION_CAPABLE_MODEL_NAMES`: qwen3.5-35b + thinking, pixtral) die Modelle sowohl in `DEFAULT_MODELS` als auch in der Discovery.
+
 **ACP-Bilder von Clients (Vision Phase 4)**
 - Der ACP-Agent deklariert jetzt `image=true` und nimmt Bild-Content-Blocks von ACP-Clients (Zed etc.) entgegen: eingehende `ImageContentBlock`s (base64 `data` + `mime_type`) werden zu `image_url`-Parts und an die User-Nachricht gehängt (via `act(images=…)`, inkl. Vision-Guard). Neu: `VibeAcpAgentLoop._build_images`.
 - Hinweis: Clipboard-Image-Paste in der TUI ist bewusst zurückgestellt (terminalspezifisch); TUI-Bildinput geht bereits über `@bild.png` (Phase 1).

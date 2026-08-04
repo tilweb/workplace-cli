@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Default-Modell auf `qwen3.5-35b` (Vision-fähig)**
+- Default-Modell von `qwen3-30b` (Text) auf `qwen3-5-a3b-35b-256k` (Alias `qwen3.5-35b`) umgestellt. Per curl gegen Adacor verifiziert: das Modell erkennt Bildinhalte korrekt (rotes Testbild → „Rot") und der Endpoint akzeptiert OpenAI-Style `image_url`-Parts — Voraussetzung fuer die kommende Bild-/Dokument-Unterstuetzung (Vision).
+
 **Update: notify-only statt stillem Self-Upgrade**
 - `enable_auto_update` Default auf `false`. Der Update-Check beim Start bleibt an und zeigt bei neuer Version einen Hinweis mit Upgrade-Befehl (`brew upgrade workplace-cli` / `uv tool upgrade workplace-cli`) — die App führt aber **kein** ungefragtes `brew/uv upgrade` mehr im Hintergrund aus. Der User startet das Update selbst. (`do_update()` bleibt vorhanden; wer will, kann `enable_auto_update = true` in `config.toml` setzen.)
 

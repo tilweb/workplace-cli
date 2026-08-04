@@ -233,7 +233,7 @@ async def test_compact_uses_compaction_model() -> None:
         [mock_llm_chunk(content="<final>")],
     ])
     cfg = build_test_vibe_config(
-        active_model="qwen3-30b",
+        active_model="qwen3.5-35b",
         models=make_test_models(auto_compact_threshold=1),
         compaction_model=compaction,
         providers=DEFAULT_PROVIDERS,

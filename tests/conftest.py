@@ -148,7 +148,7 @@ def _scratchpad_dir(
 @pytest.fixture(autouse=True)
 def _mock_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("MISTRAL_API_KEY", "mock")
-    # Fork-Default-Provider ist adacor (active_model qwen3-30b) — ohne Key
+    # Fork-Default-Provider ist adacor (active_model qwen3.5-35b) — ohne Key
     # wirft VibeConfig.load() MissingAPIKeyError in fast jedem Test.
     monkeypatch.setenv("ADACOR_AI_API_KEY", "mock")
 

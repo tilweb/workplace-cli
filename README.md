@@ -37,7 +37,7 @@ workplace -p "Erkläre src/foo.py"      # One-Shot
 workplace --setup                      # interaktiver Setup
 ```
 
-Default-Modell: `qwen3-30b` (Adacor AI, 256k Context). Wechseln per Slash-Command `/agent` in der TUI oder `--agent`-Flag.
+Default-Modell: `qwen3.5-35b` (Adacor AI, 256k Context). Wechseln per Slash-Command `/agent` in der TUI oder `--agent`-Flag.
 
 ## Modell-Auswahl
 

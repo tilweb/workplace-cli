@@ -449,9 +449,9 @@ DEFAULT_MODELS = [
     # Erstes Modell wird DEFAULT_ACTIVE_MODEL. Weitere Adacor-Modelle bitte
     # hier oben anhaengen.
     ModelConfig(
-        name="qwen3-a3b-30b-256k",
+        name="qwen3-5-a3b-35b-256k",
         provider="adacor",
-        alias="qwen3-30b",
+        alias="qwen3.5-35b",
         input_price=0.0,
         output_price=0.0,
     ),

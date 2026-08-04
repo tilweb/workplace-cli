@@ -47,7 +47,12 @@ jobs:
         run: |
           set -e
           uv pip install --no-deps dist/workplace_cli-*.whl
-          uv run workplace --version | grep -F "1.0.0"
+          # Version aus dem gebauten Wheel ableiten (kein hartkodierter Wert) —
+          # verifiziert zugleich, dass --version == pyproject-Version.
+          WHEEL=$(ls dist/workplace_cli-*.whl)
+          VERSION=$(echo "$WHEEL" | sed -E 's/.*workplace_cli-([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Erwartete Version: $VERSION"
+          uv run workplace --version | grep -qF "$VERSION"
       - name: Determine tag
         id: tag
         run: |

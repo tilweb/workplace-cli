@@ -56,6 +56,8 @@ Mit einem vision-fähigen Modell (Default `qwen3.5-35b`) kann der Agent Bilder s
 @screenshot.png Was ist auf dem Bild? Wo ist der Fehler?
 ```
 
+Alternativ **die Datei ins Eingabefeld ziehen** — sie wird automatisch als `@`-Mention angehängt (genau eine Datei; Ordner/Mehrfachauswahl werden abgelehnt).
+
 Der Agent kann Bild- und **PDF-Dateien** auch **selbst** öffnen: `read_file` auf eine Bild- oder PDF-Datei liefert sie als Vision-Input (z.B. „Schau dir `@bericht.pdf` an und fasse Seite 1 zusammen"). PDF-Seiten werden zu Bildern gerendert (erste 10 Seiten).
 
 Unterstützt: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` (bis 10 MB) und `.pdf` (bis 25 MB). Bei einem Text-Modell werden Bilder/PDFs ignoriert (mit Log-Hinweis).

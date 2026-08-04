@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Datei ins Eingabefeld ziehen (Drag-to-Attach, Vision Phase 4B)**
+- Wird eine Datei ins Eingabefeld gezogen (das Terminal fügt ihren Pfad ein), wird sie automatisch als `@`-Mention eingefügt und damit angehängt — sichtbar im Feld. Genau **eine** Datei: Ordner und Mehrfachauswahl werden abgefangen (mit Hinweis). Pfade mit Leerzeichen werden korrekt gequotet.
+
 ### [1.1.0] — 2026-08-04
 
 Basiert weiterhin auf Mistral Vibe v2.9.4. Highlights: Vision-Support (Bilder & PDFs), Mistral aus dem Modell-Picker entfernt, Default-Modell `qwen3.5-35b`, notify-only Update-Verhalten, plus mehrere Rebrand-/Prod-Fixes.

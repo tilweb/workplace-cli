@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+import shlex
 from typing import Any, ClassVar, Literal
 
 from textual import events
@@ -21,6 +23,51 @@ from vibe.cli.voice_manager.voice_manager_port import (
 )
 
 InputMode = Literal["!", "/", ">", "&"]
+
+# === ADACOR PATCH: drag-a-file-into-the-input support ===
+# Terminals paste the file's (absolute) path as text when a file is dragged in.
+# We turn a single dropped file into an @-mention so it gets attached; folders
+# and multi-file drops are rejected.
+DRAG_TOO_MANY_MESSAGE = (
+    "Es kann nur eine einzelne Datei angehängt werden, nicht mehrere."
+)
+DRAG_FOLDER_MESSAGE = (
+    "Ordner können nicht angehängt werden — bitte eine einzelne Datei."
+)
+
+
+def resolve_dropped_file(text: str) -> Path | str | None:
+    """Interpret pasted text as a drag-and-dropped file path.
+
+    Returns the single dropped file's ``Path``, an error string (folder or
+    multiple files), or ``None`` when the text is not a pure absolute-path drop
+    (i.e. ordinary paste that should be inserted as-is).
+    """
+    try:
+        tokens = shlex.split(text.strip())
+    except ValueError:
+        return None
+    # Only treat it as a file drop if every token is an absolute path — this is
+    # what terminals emit on drag; ordinary text falls through to normal paste.
+    if not tokens or not all(t.startswith(("/", "~")) for t in tokens):
+        return None
+    paths = [Path(t).expanduser() for t in tokens]
+    existing = [p for p in paths if p.exists()]
+    if not existing:
+        return None
+    if len(tokens) > 1 or len(existing) > 1:
+        return DRAG_TOO_MANY_MESSAGE
+    dropped = existing[0]
+    if dropped.is_dir():
+        return DRAG_FOLDER_MESSAGE
+    return dropped
+
+
+def path_to_mention(path: Path) -> str:
+    text = str(path)
+    if " " in text or '"' in text:
+        return f'@"{text}" '
+    return f"@{text} "
 
 
 class ChatTextArea(TextArea):
@@ -88,6 +135,19 @@ class ChatTextArea(TextArea):
 
     def on_click(self, event: events.Click) -> None:
         self._mark_cursor_moved_if_needed()
+
+    async def _on_paste(self, event: events.Paste) -> None:
+        # === ADACOR PATCH: a dropped file becomes an @-mention attachment ===
+        dropped = resolve_dropped_file(event.text)
+        if dropped is None:
+            await super()._on_paste(event)
+            return
+        event.prevent_default()
+        event.stop()
+        if isinstance(dropped, str):
+            self.notify(dropped, severity="warning", title="Anhang")
+            return
+        self.insert(path_to_mention(dropped))
 
     def action_insert_newline(self) -> None:
         self.insert("\n")

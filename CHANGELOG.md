@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**ACP-Bilder von Clients (Vision Phase 4)**
+- Der ACP-Agent deklariert jetzt `image=true` und nimmt Bild-Content-Blocks von ACP-Clients (Zed etc.) entgegen: eingehende `ImageContentBlock`s (base64 `data` + `mime_type`) werden zu `image_url`-Parts und an die User-Nachricht gehängt (via `act(images=…)`, inkl. Vision-Guard). Neu: `VibeAcpAgentLoop._build_images`.
+- Hinweis: Clipboard-Image-Paste in der TUI ist bewusst zurückgestellt (terminalspezifisch); TUI-Bildinput geht bereits über `@bild.png` (Phase 1).
+
 **PDF/Dokumente lesen (Vision Phase 3)**
 - `read_file` auf eine `.pdf`-Datei rendert die Seiten zu Bildern (via `pypdfium2` + `Pillow`, beide permissiv lizenziert — bewusst **nicht** PyMuPDF wegen AGPL) und hängt sie als Vision-Input an. End-to-end gegen Adacor + `qwen3.5-35b` verifiziert (PDF mit Text „BANANE" → korrekt gelesen).
 - Cap: erste 10 Seiten (`MAX_PDF_PAGES`), Render-Scale 2×, PDF >25 MB werden übersprungen. Neu: `vibe/core/utils/documents.py`; `ReadFileResult.image_urls` (Liste, für mehrseitige Dokumente). Neue Dependencies: `pypdfium2`, `pillow`.

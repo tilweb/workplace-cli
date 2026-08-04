@@ -26,7 +26,7 @@ class TestACPInitialize:
         assert response.agent_capabilities == AgentCapabilities(
             load_session=True,
             prompt_capabilities=PromptCapabilities(
-                audio=False, embedded_context=True, image=False
+                audio=False, embedded_context=True, image=True
             ),
             session_capabilities=SessionCapabilities(
                 close=SessionCloseCapabilities(),
@@ -54,7 +54,7 @@ class TestACPInitialize:
         assert response.agent_capabilities == AgentCapabilities(
             load_session=True,
             prompt_capabilities=PromptCapabilities(
-                audio=False, embedded_context=True, image=False
+                audio=False, embedded_context=True, image=True
             ),
             session_capabilities=SessionCapabilities(
                 close=SessionCloseCapabilities(),

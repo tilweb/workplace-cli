@@ -270,7 +270,7 @@ class VibeAcpAgentLoop(AcpAgent):
             agent_capabilities=AgentCapabilities(
                 load_session=True,
                 prompt_capabilities=PromptCapabilities(
-                    audio=False, embedded_context=True, image=False
+                    audio=False, embedded_context=True, image=True
                 ),
                 session_capabilities=SessionCapabilities(
                     close=SessionCloseCapabilities(),
@@ -281,9 +281,7 @@ class VibeAcpAgentLoop(AcpAgent):
             protocol_version=PROTOCOL_VERSION,
             # === ADACOR PATCH: ACP-Identifikation auf Workplace CLI ===
             agent_info=Implementation(
-                name="@adacor/workplace-cli",
-                title="Workplace CLI",
-                version=__version__,
+                name="@adacor/workplace-cli", title="Workplace CLI", version=__version__
             ),
             # === ADACOR PATCH END ===
             auth_methods=auth_methods,
@@ -807,6 +805,7 @@ class VibeAcpAgentLoop(AcpAgent):
             )
 
         text_prompt = self._build_text_prompt(prompt)
+        images = self._build_images(prompt)
         resolved_message_id = _resolved_user_message_id(message_id)
 
         if command_response := await self._maybe_handle_builtin_command(
@@ -827,7 +826,7 @@ class VibeAcpAgentLoop(AcpAgent):
 
         async def agent_loop_task() -> None:
             async for update in self._run_agent_loop(
-                session, text_prompt, resolved_message_id
+                session, text_prompt, resolved_message_id, images=images
             ):
                 await self.client.session_update(session_id=session.id, update=update)
 
@@ -861,6 +860,14 @@ class VibeAcpAgentLoop(AcpAgent):
             usage=self._build_usage(session),
             user_message_id=resolved_message_id,
         )
+
+    def _build_images(self, acp_prompt: list[ContentBlock]) -> list[str]:
+        # === ADACOR PATCH: accept image content blocks from ACP clients ===
+        images: list[str] = []
+        for block in acp_prompt:
+            if block.type == "image" and block.data:
+                images.append(f"data:{block.mime_type};base64,{block.data}")
+        return images
 
     def _build_text_prompt(self, acp_prompt: list[ContentBlock]) -> str:
         text_prompt = ""
@@ -927,12 +934,18 @@ class VibeAcpAgentLoop(AcpAgent):
         return await handler(session, text_prompt, message_id)
 
     async def _run_agent_loop(
-        self, session: AcpSessionLoop, prompt: str, client_message_id: str | None = None
+        self,
+        session: AcpSessionLoop,
+        prompt: str,
+        client_message_id: str | None = None,
+        images: list[str] | None = None,
     ) -> AsyncGenerator[SessionUpdate | UsageUpdate]:
         rendered_prompt = render_path_prompt(prompt, base_dir=Path.cwd())
 
         async with aclosing(
-            session.agent_loop.act(rendered_prompt, client_message_id=client_message_id)
+            session.agent_loop.act(
+                rendered_prompt, client_message_id=client_message_id, images=images
+            )
         ) as events:
             async for event in events:
                 if isinstance(event, AssistantEvent):

@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from collections.abc import AsyncGenerator
 import functools
+import re
 from typing import TYPE_CHECKING, ClassVar, final
 from urllib.parse import urlparse
+
+_EXPLICIT_SCHEME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.\-]*://")
 
 import httpx
 from pydantic import BaseModel, Field
@@ -81,7 +84,9 @@ class WebFetch(
     ToolUIData[WebFetchArgs, WebFetchResult],
 ):
     description: ClassVar[str] = (
-        "Fetch content from a URL. Converts HTML to markdown for readability."
+        "Fetch content from an http(s) URL. Converts HTML to markdown for "
+        "readability. Only http/https are supported — use read_file for local "
+        "files (including images and PDFs)."
     )
 
     @staticmethod
@@ -89,15 +94,31 @@ class WebFetch(
         """Normalise a URL to always have an http(s) scheme.
 
         Handles protocol-relative URLs (//example.com) and bare URLs (example.com).
+        A URL that already carries an explicit scheme (e.g. ``file:``) is left
+        untouched so it can be rejected by ``_validate_args`` rather than being
+        mangled into a bogus ``https://file:...`` URL.
         """
-        raw = url.lstrip("/") if url.startswith("//") else url
-        return raw if raw.startswith(("http://", "https://")) else "https://" + raw
+        if url.startswith(("http://", "https://")):
+            return url
+        if url.startswith("//"):
+            return "https://" + url.lstrip("/")
+        # Only leave explicit ``scheme://`` URLs (e.g. file://, ftp://) untouched
+        # so they are rejected by _validate_args instead of being mangled. A bare
+        # ``host:port`` has no ``://`` and gets an https:// prefix as before.
+        if _EXPLICIT_SCHEME_RE.match(url):
+            return url
+        return "https://" + url
 
     def resolve_permission(self, args: WebFetchArgs) -> PermissionContext | None:
         if self.config.permission in {ToolPermission.ALWAYS, ToolPermission.NEVER}:
             return PermissionContext(permission=self.config.permission)
 
+        # === ADACOR PATCH: don't prompt for non-http(s) schemes (e.g. file://);
+        # run() rejects them immediately with a clear error instead. ===
         parsed = urlparse(self._normalize_url(args.url))
+        if parsed.scheme not in ("http", "https"):
+            return PermissionContext(permission=ToolPermission.ALWAYS)
+
         domain = parsed.netloc or parsed.path.split("/")[0]
         if not domain:
             return None

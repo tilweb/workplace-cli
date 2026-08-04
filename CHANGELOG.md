@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**`web_fetch` auf http(s) beschränkt (kein `file://`-Prompt mehr)**
+- `web_fetch` lehnte `file://` zwar schon ab, zeigte aber vorher einen verwirrenden „fetching from file:"-Permission-Prompt (weil `_normalize_url` `file:///x` zu `https://file:...` verhunzte). Jetzt: explizite Nicht-http(s)-Schemes werden nicht mehr umgeschrieben, kein Prompt, sofortiger klarer Fehler „Invalid URL scheme". Bare `host:port` (z.B. `example.com:8080`) bekommt weiterhin `https://`. Beschreibung ergänzt: für lokale Dateien `read_file` nutzen.
+
 **Fix: discovered Vision-Modelle wurden nicht als vision-fähig erkannt**
 - `supports_vision` war nur am hartkodierten Default gesetzt; ein via `/models`-Discovery geladenes (und im Picker gewähltes) `qwen3-5-a3b-35b-256k` galt als Text-Modell → der Vision-Guard verwarf Bilder/PDFs, das Modell sah nur den Platzhalter. Jetzt markiert eine kuratierte Menge (`VISION_CAPABLE_MODEL_NAMES`: qwen3.5-35b + thinking, pixtral) die Modelle sowohl in `DEFAULT_MODELS` als auch in der Discovery.
 

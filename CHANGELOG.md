@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.2.0] — 2026-08-05
+
 **Neues Tool `screenshot` — Seiten rendern und visuell prüfen**
 - Rendert eine URL oder lokale HTML-Datei in einem headless Chromium und hängt den Screenshot als Bild an das Tool-Ergebnis — die Vision-Modelle *sehen* die gerenderte Seite (z.B. zur visuellen Kontrolle von Frontend-Arbeit). Optionen: `full_page`, Viewport-Größe, `wait_for_selector`. Chromium wird einmalig via `uv tool run --from workplace-cli playwright install chromium` installiert (Fehlermeldung führt hin).
 

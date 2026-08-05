@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Neuer Skill `/document-builder` — Office-Dokumente erstellen**
+- Erzeugt Word (.docx), Excel (.xlsx), PowerPoint (.pptx) und PDF aus Inhalten/Daten — das Modell schreibt ein kurzes Python-Skript und führt es aus. Bibliotheken (`python-docx`, `openpyxl`, `python-pptx`, `reportlab`, alle permissiv lizenziert) werden mitgeliefert, kein API/Internet nötig. Standardmäßig neutrales, professionelles Standarddesign.
+
 **Neues Tool `glob` — Dateien nach Namensmuster finden**
 - Findet Dateien per Glob-Muster (z.B. `**/*.py`, `src/**/*.ts`, `README*`), Ergebnisse nach Änderungszeit sortiert (neueste zuerst). Ergänzt `grep` (Inhaltssuche) um schnelle Namenssuche. Überspringt Standard-Verzeichnisse (`.git`, `node_modules`, `__pycache__`, `.venv` …), Ergebnislimit konfigurierbar.
 

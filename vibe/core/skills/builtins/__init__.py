@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from vibe.core.skills.builtins.canvas_design import SKILL as CANVAS_DESIGN_SKILL
+from vibe.core.skills.builtins.document_builder import SKILL as DOCUMENT_BUILDER_SKILL
 from vibe.core.skills.builtins.frontend_design import SKILL as FRONTEND_DESIGN_SKILL
 from vibe.core.skills.builtins.skill_creator import SKILL as SKILL_CREATOR_SKILL
 from vibe.core.skills.builtins.theme_factory import SKILL as THEME_FACTORY_SKILL
@@ -15,5 +16,6 @@ BUILTIN_SKILLS: dict[str, SkillInfo] = {
         CANVAS_DESIGN_SKILL,
         THEME_FACTORY_SKILL,
         SKILL_CREATOR_SKILL,
+        DOCUMENT_BUILDER_SKILL,
     ]
 }

@@ -6,7 +6,14 @@ License: Apache-2.0 (Anthropic, see NOTICE for attribution).
 
 from __future__ import annotations
 
+from vibe import VIBE_ROOT
 from vibe.core.skills.models import SkillInfo
+
+# Visual showcase of all 10 themes, shipped as a package asset. Regenerate with
+# assets/build_theme_showcase.py whenever the theme list changes.
+THEME_SHOWCASE_PATH = (
+    VIBE_ROOT / "core" / "skills" / "builtins" / "assets" / "theme-showcase.pdf"
+)
 
 _DESCRIPTION = (
     "Toolkit for styling artifacts with a theme. These artifacts can be "
@@ -294,10 +301,17 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 
 """
 
+# Point the "show the showcase" step at the real bundled asset (absolute path),
+# so read_file can render it — the upstream skill referenced a bare filename
+# that did not exist in Workplace CLI.
+_PROMPT_WITH_ASSET = _PROMPT.replace(
+    "`theme-showcase.pdf`", f"`{THEME_SHOWCASE_PATH}`"
+)
+
 SKILL = SkillInfo(
     name="theme-factory",
     description=_DESCRIPTION,
     user_invocable=True,
     license="Apache-2.0 (Anthropic, https://github.com/anthropics/skills)",
-    prompt=_PROMPT,
+    prompt=_PROMPT_WITH_ASSET,
 )

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**`theme-factory`: Theme-Showcase-PDF wird mitgeliefert**
+- Der Skill verwies auf eine `theme-showcase.pdf`, die nicht existierte. Jetzt liegt sie als Paket-Asset bei (alle 10 Themes visuell: Farbfelder + Hex, Schrift-Paarung, Einsatzzweck) und der Skill zeigt beim Start die echte Datei. Reproduzierbar via `assets/build_theme_showcase.py`; ein Test hält Generator und Skill-Definitionen konsistent.
+
 **Design-Skills nutzen jetzt das `screenshot`-Tool**
 - `frontend-design` bekommt einen visuellen Self-Check: gerendertes UI per `screenshot` ansehen und iterieren, statt Design nur aus dem Code zu beurteilen. `canvas-design` erhält einen konkreten, verlässlichen Render-Pfad (HTML/CSS → `screenshot` → PNG statt Font-Download/Interpreter-Sackgasse) und nutzt für PDF `$WORKPLACE_PYTHON`. Schließt die Lücke, die das `screenshot`-Tool (v1.2.0) eigentlich füllen sollte.
 

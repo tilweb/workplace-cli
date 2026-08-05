@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Design-Skills nutzen jetzt das `screenshot`-Tool**
+- `frontend-design` bekommt einen visuellen Self-Check: gerendertes UI per `screenshot` ansehen und iterieren, statt Design nur aus dem Code zu beurteilen. `canvas-design` erhält einen konkreten, verlässlichen Render-Pfad (HTML/CSS → `screenshot` → PNG statt Font-Download/Interpreter-Sackgasse) und nutzt für PDF `$WORKPLACE_PYTHON`. Schließt die Lücke, die das `screenshot`-Tool (v1.2.0) eigentlich füllen sollte.
+
 **Hintergrund-Prozesse im `bash`-Tool**
 - `bash` akzeptiert jetzt `run_in_background=True`: langlaufende Befehle (Dev-Server, `tail -f`, Watcher, langsame Builds) starten detached und blockieren die Session nicht mehr. Zwei neue Tools verwalten sie: `bash_output` liest den seit dem letzten Mal neu angefallenen Output (inkrementell, inkl. Status/Exit-Code), `kill_bash` beendet die Prozessgruppe.
 

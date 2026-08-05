@@ -126,6 +126,27 @@ To push boundaries, follow design instinct/intuition while using the philosophy 
 
 **CRITICAL**: To achieve human-crafted quality (not AI-generated), create work that looks like it took countless hours. Make it appear as though someone at the absolute top of their field labored over every detail with painstaking care. Ensure the composition, spacing, color choices, typography - everything screams expert-level craftsmanship. Double-check that nothing overlaps, formatting is flawless, every detail perfect. Create something that could be shown to people to prove expertise and rank as undeniably impressive.
 
+### PRODUCING THE PNG/PDF (Workplace CLI)
+
+The reliable way to render the canvas here is **HTML/CSS → screenshot**, not
+image libraries or font downloads:
+1. Author the piece as a single self-contained HTML file (inline CSS/SVG). CSS
+   gives you full control over composition, gradients, patterns, blend modes,
+   and typography. Set the page to the exact canvas size you want.
+2. Render it with the `screenshot` tool (`full_page: true`) to produce the PNG.
+   The screenshot is attached back as an image — **look at it** and critique it
+   against the philosophy, then refine the HTML and re-render. Iterate until it
+   is genuinely museum-quality.
+3. For a PDF, either `screenshot` each page and assemble, or render the same
+   HTML to PDF with a short script run via `"$WORKPLACE_PYTHON"` (see the
+   document-builder approach) — never the login shell's bare `python`.
+
+**Fonts**: prefer distinctive system fonts or `@font-face` with a solid
+fallback; do NOT block on downloading a font (paths/network are unreliable and
+a missing file silently ruins the piece). If a specific typeface matters and
+isn't available, choose the closest available character-rich alternative rather
+than leaving a broken glyph.
+
 Output the final result as a single, downloadable .pdf or .png file, alongside the design philosophy used as a .md file.
 
 ---

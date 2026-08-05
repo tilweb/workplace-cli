@@ -58,6 +58,20 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: extraordinary creative work is possible. Don't hold back — show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Verify visually before you're done
+
+Don't judge the design from the code alone — look at the rendered result. Once
+the HTML/component is written, use the `screenshot` tool to render it and see
+it as an image:
+- For a static HTML file: `screenshot` its path (use `full_page: true` for long
+  pages). For a component behind a dev server, start the server with
+  `bash(run_in_background=True)`, then `screenshot` its URL.
+- Study the screenshot critically: spacing and alignment, contrast and
+  readability, whether the type hierarchy reads, whether anything overflows,
+  overlaps, or clips. Check both light and dark if the design supports them.
+- Refine and re-screenshot until it genuinely looks polished. One or two
+  render-and-refine passes catch problems that are invisible in source.
 """
 
 SKILL = SkillInfo(

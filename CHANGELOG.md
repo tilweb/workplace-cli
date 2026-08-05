@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.3.0] — 2026-08-05
+
 **`theme-factory`: Theme-Showcase-PDF wird mitgeliefert**
 - Der Skill verwies auf eine `theme-showcase.pdf`, die nicht existierte. Jetzt liegt sie als Paket-Asset bei (alle 10 Themes visuell: Farbfelder + Hex, Schrift-Paarung, Einsatzzweck) und der Skill zeigt beim Start die echte Datei. Reproduzierbar via `assets/build_theme_showcase.py`; ein Test hält Generator und Skill-Definitionen konsistent.
 

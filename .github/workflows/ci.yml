@@ -64,7 +64,12 @@ jobs:
           set -e
           echo "Testing 'workplace --version'"
           uv run workplace --version
-          uv run workplace --version | grep -F "1.0.0" || (echo "::error::workplace --version does not show 1.0.0"; exit 1)
+          # Erwartete Version aus dem gebauten Wheel ableiten (kein hartkodierter
+          # Wert) — verifiziert zugleich, dass --version == pyproject-Version.
+          WHEEL=$(ls dist/workplace_cli-*.whl)
+          VERSION=$(echo "$WHEEL" | sed -E 's/.*workplace_cli-([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "Erwartete Version: $VERSION"
+          uv run workplace --version | grep -qF "$VERSION" || (echo "::error::workplace --version zeigt nicht $VERSION"; exit 1)
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v5
         with:

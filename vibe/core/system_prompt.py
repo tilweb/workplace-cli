@@ -10,7 +10,8 @@ import sys
 from typing import TYPE_CHECKING
 
 from vibe.core.config.harness_files import get_harness_files_manager
-from vibe.core.paths import VIBE_HOME
+from vibe.core.memory import MemoryManager
+from vibe.core.paths import MEMORY_INDEX_FILE, VIBE_HOME
 from vibe.core.prompts import UtilityPrompt
 from vibe.core.utils import is_dangerous_directory, is_windows
 
@@ -337,6 +338,14 @@ def get_universal_system_prompt(  # noqa: PLR0912
             template = UtilityPrompt.AGENTS_DOC.read()
             sections.append(
                 Template(template).safe_substitute(sections="\n\n".join(doc_sections))
+            )
+
+        memory_index = MemoryManager().load_index()
+        if memory_index:
+            sections.append(
+                f"## Memory\n\nContents of {MEMORY_INDEX_FILE.path} "
+                "(facts you saved in earlier sessions — read the linked file for "
+                f"the full note before relying on it):\n\n{memory_index}"
             )
 
     return "\n\n".join(sections)

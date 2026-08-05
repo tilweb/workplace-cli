@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Persistentes Gedächtnis über Sessions hinweg (`remember`-Tool)**
+- Neues Tool `remember`: speichert dauerhafte Fakten (User-Präferenzen, Projekt-Konventionen, Umgebungs-Details) als Markdown-Dateien unter `$WORKPLACE_HOME/memory`. Ein `MEMORY.md`-Index wird bei jedem Schreiben/Löschen aus den Dateien regeneriert (kann nicht driften) und beim Sessionstart in den System-Prompt injiziert — der Agent „erinnert" sich so über Sessions hinweg. Löschen via `action: "delete"`.
+
 **Neuer Skill `/document-builder` — Office-Dokumente erstellen**
 - Erzeugt Word (.docx), Excel (.xlsx), PowerPoint (.pptx) und PDF aus Inhalten/Daten — das Modell schreibt ein kurzes Python-Skript und führt es aus. Bibliotheken (`python-docx`, `openpyxl`, `python-pptx`, `reportlab`, alle permissiv lizenziert) werden mitgeliefert, kein API/Internet nötig. Standardmäßig neutrales, professionelles Standarddesign.
 

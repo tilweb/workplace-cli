@@ -123,3 +123,66 @@ def test_headless_section_absent_by_default() -> None:
     )
 
     assert "Headless Mode" not in prompt
+
+
+def test_memory_index_injected_into_system_prompt(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
+    from vibe.core.memory import MemoryManager
+
+    MemoryManager().write_memory(
+        "deploy-command",
+        "Deploy runs via `make ship`, never npm.",
+        "How this project is deployed",
+    )
+
+    config = build_test_vibe_config(
+        system_prompt_id="tests",
+        include_project_context=True,
+        include_prompt_detail=False,
+        include_model_info=False,
+        include_commit_signature=False,
+    )
+    tool_manager = ToolManager(lambda: config)
+    skill_manager = SkillManager(lambda: config)
+    agent_manager = AgentManager(lambda: config)
+
+    prompt = get_universal_system_prompt(
+        tool_manager,
+        config,
+        skill_manager,
+        agent_manager,
+        include_git_status=False,
+    )
+
+    assert "## Memory" in prompt
+    assert "deploy-command" in prompt
+    assert "How this project is deployed" in prompt
+
+
+def test_memory_section_absent_without_memories(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.setenv("WORKPLACE_HOME", str(tmp_path))
+
+    config = build_test_vibe_config(
+        system_prompt_id="tests",
+        include_project_context=True,
+        include_prompt_detail=False,
+        include_model_info=False,
+        include_commit_signature=False,
+    )
+    tool_manager = ToolManager(lambda: config)
+    skill_manager = SkillManager(lambda: config)
+    agent_manager = AgentManager(lambda: config)
+
+    prompt = get_universal_system_prompt(
+        tool_manager,
+        config,
+        skill_manager,
+        agent_manager,
+        include_git_status=False,
+    )
+
+    assert "## Memory" not in prompt

@@ -112,6 +112,7 @@ dev = [
     "pyright>=1.1.403",
     "pytest>=8.3.5",
     "pytest-asyncio>=1.2.0",
+    "pytest-rerunfailures>=15.0",
     "pytest-textual-snapshot>=1.1.0",
     "pytest-timeout>=2.4.0",
     "pytest-xdist>=3.8.0",

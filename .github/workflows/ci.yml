@@ -76,3 +76,52 @@ jobs:
           name: workplace-cli-wheel
           path: dist/*.whl
           retention-days: 30
+
+  typecheck:
+    name: Typecheck (pyright)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Sync deps
+        run: uv sync --all-extras --frozen
+      - name: Pyright
+        run: uv run pyright vibe/
+
+  test:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Sync deps
+        run: uv sync --all-extras --frozen
+      # Bulk suite in full parallelism. One rerun absorbs rare load hiccups.
+      - name: Unit + integration tests (excl. snapshots)
+        run: uv run pytest --ignore=tests/snapshots -n auto --reruns 1 --reruns-delay 1
+      # UI snapshot tests render full Textual apps; under high parallelism they
+      # hit the per-test timeout or capture an off-frame. Low parallelism plus
+      # reruns keeps them a trustworthy signal (a real diff fails all attempts).
+      # The screenshot render test self-skips when Chromium is not installed.
+      - name: UI snapshot tests (low parallelism)
+        run: uv run pytest tests/snapshots -n 2 --reruns 2 --reruns-delay 1

@@ -2,12 +2,44 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
+import pytest
 from textual.pilot import Pilot
 
 from tests.conftest import build_test_vibe_config
 from tests.snapshots.base_snapshot_test_app import BaseSnapshotTestApp
 from tests.snapshots.snap_compare import SnapCompare
 from vibe.core.config._settings import ModelConfig
+
+
+async def _deterministic_refresh(self) -> None:
+    """Finalise the picker from the configured models only.
+
+    The real ``_refresh_models_async`` probes Ollama, hits the Adacor
+    ``/models`` endpoint, reads/writes the on-disk discovery cache and reloads
+    the config from disk — all of which make the rendered model list depend on
+    the host environment (and mutate the real cache). For a deterministic
+    snapshot we skip discovery entirely and render just the injected test
+    config, mirroring only the picker-finalisation tail of the production path.
+    """
+    from vibe.cli.textual_ui.app import BottomApp
+    from vibe.cli.textual_ui.widgets.model_picker import ModelPickerApp
+
+    if self._current_bottom_app != BottomApp.ModelPicker:
+        return
+    try:
+        picker = self.query_one(ModelPickerApp)
+    except Exception:
+        return
+    picker.update_models(self._build_models_by_provider(), loading=False)
+
+
+@pytest.fixture(autouse=True)
+def _no_live_model_discovery(monkeypatch):
+    """Keep the model picker independent of host models / network / cache."""
+    monkeypatch.setattr(
+        "vibe.cli.textual_ui.app.VibeApp._refresh_models_async",
+        _deterministic_refresh,
+    )
 
 
 def _model_picker_config():

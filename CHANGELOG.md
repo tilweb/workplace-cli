@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Neues Tool `screenshot` — Seiten rendern und visuell prüfen**
+- Rendert eine URL oder lokale HTML-Datei in einem headless Chromium und hängt den Screenshot als Bild an das Tool-Ergebnis — die Vision-Modelle *sehen* die gerenderte Seite (z.B. zur visuellen Kontrolle von Frontend-Arbeit). Optionen: `full_page`, Viewport-Größe, `wait_for_selector`. Chromium wird einmalig via `uv tool run --from workplace-cli playwright install chromium` installiert (Fehlermeldung führt hin).
+
 **Persistentes Gedächtnis über Sessions hinweg (`remember`-Tool)**
 - Neues Tool `remember`: speichert dauerhafte Fakten (User-Präferenzen, Projekt-Konventionen, Umgebungs-Details) als Markdown-Dateien unter `$WORKPLACE_HOME/memory`. Ein `MEMORY.md`-Index wird bei jedem Schreiben/Löschen aus den Dateien regeneriert (kann nicht driften) und beim Sessionstart in den System-Prompt injiziert — der Agent „erinnert" sich so über Sessions hinweg. Löschen via `action: "delete"`.
 

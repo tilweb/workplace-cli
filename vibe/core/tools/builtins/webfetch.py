@@ -116,7 +116,7 @@ class WebFetch(
         # === ADACOR PATCH: don't prompt for non-http(s) schemes (e.g. file://);
         # run() rejects them immediately with a clear error instead. ===
         parsed = urlparse(self._normalize_url(args.url))
-        if parsed.scheme not in ("http", "https"):
+        if parsed.scheme not in {"http", "https"}:
             return PermissionContext(permission=ToolPermission.ALWAYS)
 
         domain = parsed.netloc or parsed.path.split("/")[0]

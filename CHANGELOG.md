@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Neues Tool `glob` — Dateien nach Namensmuster finden**
+- Findet Dateien per Glob-Muster (z.B. `**/*.py`, `src/**/*.ts`, `README*`), Ergebnisse nach Änderungszeit sortiert (neueste zuerst). Ergänzt `grep` (Inhaltssuche) um schnelle Namenssuche. Überspringt Standard-Verzeichnisse (`.git`, `node_modules`, `__pycache__`, `.venv` …), Ergebnislimit konfigurierbar.
+
 ### [1.1.2] — 2026-08-04
 
 **Mistral-Lean-Agent entfernt (`/leanstall`, `/unleanstall`)**

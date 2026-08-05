@@ -1,6 +1,12 @@
-# Neu in Workplace CLI 1.1
+# Neu in Workplace CLI 1.2
 
-- **Vision — Bilder & PDFs**: Der Agent kann jetzt Bilder und PDFs *sehen*. Datei per `@bild.png` anhängen, per Copy & Paste einfügen, oder den Agent selbst per `read_file` öffnen lassen (PDF-Seiten werden gerendert). Default-Modell `qwen3.5-35b` ist vision-fähig.
-- **Datei per Copy & Paste anhängen**: Eine eingefügte Datei wird automatisch als `@`-Anhang übernommen (Drag & Drop in Terminals wie iTerm2, die Drops als Paste senden).
-- **Modell-Picker aufgeräumt**: Nur noch Adacor (live entdeckt) und lokale Modelle — Mistral ist raus.
-- **Updates: nur Hinweis**: Kein stilles Selbst-Update mehr; bei einer neuen Version zeigt Workplace CLI einen Hinweis mit dem Upgrade-Befehl.
+- **Office-Dokumente erstellen** (`/document-builder`): Word, Excel, PowerPoint und PDF aus Inhalten/Daten — in neutralem Standarddesign, ohne API oder Internet.
+- **Screenshots & visuelle Prüfung** (`screenshot`): Der Agent rendert eine URL oder lokale HTML-Datei und *sieht* das Ergebnis (Vision) — praktisch zum Kontrollieren von Frontend-Arbeit. Chromium einmalig via `playwright install chromium`.
+- **Gedächtnis über Sessions** (`remember`): Der Agent kann sich dauerhafte Fakten merken (Vorlieben, Projekt-Konventionen) und erinnert sie in späteren Sessions.
+- **Dateien schnell finden** (`glob`): Suche nach Namensmuster wie `**/*.py`, ergänzend zur Inhaltssuche (`grep`).
+
+## Weiterhin aus 1.1
+
+- **Vision — Bilder & PDFs**: Bilder und PDFs anhängen (`@bild.png`, Copy & Paste) oder vom Agent per `read_file` öffnen lassen. Default-Modell `qwen3.5-35b` ist vision-fähig.
+- **Modell-Picker**: Nur Adacor (live entdeckt) und lokale Modelle — Mistral ist raus.
+- **Updates: nur Hinweis** — kein stilles Selbst-Update.

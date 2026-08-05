@@ -1434,8 +1434,9 @@ class AgentLoop:
                     responded_ids: set[str] = set()
                     j = i + 1
                     while j < len(self.messages) and self.messages[j].role == "tool":
-                        if self.messages[j].tool_call_id:
-                            responded_ids.add(self.messages[j].tool_call_id)
+                        tool_call_id = self.messages[j].tool_call_id
+                        if tool_call_id:
+                            responded_ids.add(tool_call_id)
                         j += 1
 
                     if len(responded_ids) < expected_responses:

@@ -309,3 +309,34 @@ class TestDenylistWordBoundary:
         bash_tool = self._make_bash(allowlist=["cat"])
         result = bash_tool.resolve_permission(BashArgs(command="catalog"))
         assert result is not None and result.permission is not ToolPermission.ALWAYS
+
+
+def test_base_env_exposes_workplace_python():
+    """The shell must be able to reach the venv interpreter that has the
+    bundled libraries (reportlab, python-docx, …) — the login shell's own
+    python does not. See the document-builder skill.
+    """
+    import sys
+
+    from vibe.core.tools.builtins.bash import _get_base_env
+
+    env = _get_base_env()
+    assert env.get("WORKPLACE_PYTHON") == sys.executable
+
+
+@pytest.mark.asyncio
+async def test_workplace_python_can_import_bundled_libs(bash):
+    """End-to-end: a bash command using $WORKPLACE_PYTHON can import the
+    document libraries, which is exactly what the document-builder skill does.
+    """
+    result = await collect_result(
+        bash.run(
+            BashArgs(
+                command=(
+                    '"$WORKPLACE_PYTHON" -c '
+                    "\"import reportlab, docx, pptx, openpyxl; print('libs-ok')\""
+                )
+            )
+        )
+    )
+    assert "libs-ok" in result.stdout

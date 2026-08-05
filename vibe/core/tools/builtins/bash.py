@@ -82,6 +82,16 @@ def _get_shell_executable() -> str | None:
 def _get_base_env() -> dict[str, str]:
     base_env = {**os.environ, "CI": "true", "NONINTERACTIVE": "1", "NO_TTY": "1"}
 
+    # === ADACOR PATCH: expose the running interpreter to the shell ===
+    # The login shell's `python`/`python3` is the user's system Python (e.g.
+    # Homebrew), which does NOT have Workplace CLI's bundled libraries
+    # (reportlab, python-docx, …) installed. `sys.executable` is our own
+    # venv interpreter, which does. Skills that generate documents run their
+    # script via `"$WORKPLACE_PYTHON"` so the imports resolve.
+    if sys.executable:
+        base_env["WORKPLACE_PYTHON"] = sys.executable
+    # === ADACOR PATCH END ===
+
     if is_windows():
         base_env["GIT_PAGER"] = "more"
         base_env["PAGER"] = "more"

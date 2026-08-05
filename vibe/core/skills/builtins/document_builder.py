@@ -22,9 +22,21 @@ _DESCRIPTION = (
 
 _PROMPT = r"""\
 This skill creates real office documents (.docx, .xlsx, .pptx, .pdf) by
-writing a short Python script and running it with the `bash` tool. The
-required libraries ship with Workplace CLI and are always available inside
-the tool environment — do NOT try to `pip install` them:
+writing a short Python script and running it with the `bash` tool.
+
+**CRITICAL — which Python to use.** The libraries below ship *with Workplace
+CLI*, installed in its own virtual environment. The shell's `python`/`python3`
+is the user's *system* interpreter (e.g. Homebrew) and does NOT have them —
+running `python3 script.py` fails with `ModuleNotFoundError`, and
+`pip install` is both wrong and usually blocked. Always run your script with
+the interpreter Workplace CLI exposes via the `$WORKPLACE_PYTHON` environment
+variable, which points at the venv that already has every library:
+
+```bash
+"$WORKPLACE_PYTHON" build_doc.py
+```
+
+Never `pip install` these and never fall back to bare `python`/`python3`:
 
 - **Word (.docx)** → `python-docx`   (`import docx`)
 - **Excel (.xlsx)** → `openpyxl`      (`import openpyxl`)
@@ -38,9 +50,10 @@ the tool environment — do NOT try to `pip install` them:
    tabular data → Excel; presentations → PowerPoint. When unsure, ask.
 2. **Decide the output path.** Default to the current working directory with a
    sensible file name (e.g. `angebot.docx`). Respect any path the user gives.
-3. **Write a script**, then run it with `python`. Prefer writing the script to
-   the scratchpad dir and running it, over a giant inline `-c`. Keep the
-   content in the script; do not hardcode secrets.
+3. **Write a script**, then run it with `"$WORKPLACE_PYTHON" script.py` (see
+   above — never bare `python`/`python3`). Prefer writing the script to the
+   scratchpad dir and running it, over a giant inline `-c`. Keep the content
+   in the script; do not hardcode secrets.
 4. **Verify**: confirm the file exists and report its absolute path and size.
    For a quick sanity check you can `read_file` the result (docx/pdf render as
    text/pages). Never claim success without the file on disk.
@@ -148,8 +161,12 @@ doc.build(story)
 
 ## Notes
 
-- For non-ASCII text (German umlauts, €), all four libraries handle UTF-8
-  natively — just use normal Python strings.
+- For non-ASCII text (German umlauts ä/ö/ü/ß, €, em-dash —), all four
+  libraries handle it out of the box — just use normal Python strings. In
+  particular reportlab's default fonts (Helvetica/Times) already cover
+  Latin-1, so do NOT register an external TTF (e.g. DejaVu) for German text —
+  those font paths often don't exist on macOS and the registration fails.
+  Only register a font for scripts outside Latin-1 (e.g. CJK).
 - Large tables/data: read the source (CSV, prior tool output, user text) first,
   then build the document from it. For Excel, write numbers as numbers (not
   strings) so they stay sortable and summable.

@@ -32,3 +32,11 @@ def test_prompt_mentions_all_four_formats():
     prompt = BUILTIN_SKILLS["document-builder"].prompt.lower()
     for token in (".docx", ".xlsx", ".pptx", "pdf"):
         assert token in prompt
+
+
+def test_prompt_requires_workplace_python_interpreter():
+    # The shell's python lacks the bundled libs; the skill must steer the model
+    # to the venv interpreter exposed by the bash tool.
+    prompt = BUILTIN_SKILLS["document-builder"].prompt
+    assert "$WORKPLACE_PYTHON" in prompt
+    assert "pip install" in prompt  # explicitly warns against it

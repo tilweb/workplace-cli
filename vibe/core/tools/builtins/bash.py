@@ -258,6 +258,15 @@ class BashArgs(BaseModel):
     timeout: int | None = Field(
         default=None, description="Override the default command timeout."
     )
+    run_in_background: bool = Field(
+        default=False,
+        description=(
+            "Start the command detached and return immediately with a shell id "
+            "instead of waiting. Use for long-running processes (dev servers, "
+            "`tail -f`, watchers, slow builds). Read its output later with "
+            "`bash_output` and stop it with `kill_bash`."
+        ),
+    )
 
 
 class BashResult(BaseModel):
@@ -265,13 +274,22 @@ class BashResult(BaseModel):
     stdout: str
     stderr: str
     returncode: int
+    shell_id: str | None = Field(
+        default=None,
+        description="Identifier of the background shell, when run in background.",
+    )
+    background: bool = False
 
 
 class Bash(
     BaseTool[BashArgs, BashResult, BashToolConfig, BaseToolState],
     ToolUIData[BashArgs, BashResult],
 ):
-    description: ClassVar[str] = "Run a one-off bash command and capture its output."
+    description: ClassVar[str] = (
+        "Run a bash command and capture its output. Set run_in_background=True "
+        "for long-running processes (dev servers, watchers, tails) to start them "
+        "detached and manage them with bash_output and kill_bash."
+    )
 
     @classmethod
     def format_call_display(cls, args: BashArgs) -> ToolCallDisplay:
@@ -487,19 +505,51 @@ class Bash(
             command=command, stdout=stdout, stderr=stderr, returncode=returncode
         )
 
+    async def _start_background(
+        self, args: BashArgs, kwargs: dict[Literal["start_new_session"], bool]
+    ) -> BashResult:
+        from vibe.core.tools.background import get_background_manager
+
+        proc = await asyncio.create_subprocess_shell(
+            args.command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.DEVNULL,
+            env=_get_base_env(),
+            executable=_get_shell_executable(),
+            **kwargs,
+        )
+        bp = get_background_manager().register(args.command, proc)
+        return BashResult(
+            command=args.command,
+            stdout=(
+                f"Started in background as {bp.shell_id}. "
+                f"Read output with bash_output('{bp.shell_id}'); "
+                f"stop it with kill_bash('{bp.shell_id}')."
+            ),
+            stderr="",
+            returncode=0,
+            shell_id=bp.shell_id,
+            background=True,
+        )
+
     async def run(
         self, args: BashArgs, ctx: InvokeContext | None = None
     ) -> AsyncGenerator[ToolStreamEvent | BashResult, None]:
         timeout = args.timeout or self.config.default_timeout
         max_bytes = self.config.max_output_bytes
 
+        # start_new_session is Unix-only, on Windows it's ignored
+        kwargs: dict[Literal["start_new_session"], bool] = (
+            {} if is_windows() else {"start_new_session": True}
+        )
+
+        if args.run_in_background:
+            yield await self._start_background(args, kwargs)
+            return
+
         proc = None
         try:
-            # start_new_session is Unix-only, on Windows it's ignored
-            kwargs: dict[Literal["start_new_session"], bool] = (
-                {} if is_windows() else {"start_new_session": True}
-            )
-
             proc = await asyncio.create_subprocess_shell(
                 args.command,
                 stdout=asyncio.subprocess.PIPE,

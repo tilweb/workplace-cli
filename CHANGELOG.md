@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**Hintergrund-Prozesse im `bash`-Tool**
+- `bash` akzeptiert jetzt `run_in_background=True`: langlaufende Befehle (Dev-Server, `tail -f`, Watcher, langsame Builds) starten detached und blockieren die Session nicht mehr. Zwei neue Tools verwalten sie: `bash_output` liest den seit dem letzten Mal neu angefallenen Output (inkrementell, inkl. Status/Exit-Code), `kill_bash` beendet die Prozessgruppe.
+
 ### [1.2.1] — 2026-08-05
 
 **Fix: `/document-builder` schlug in der echten CLI fehl**

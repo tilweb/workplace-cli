@@ -1,6 +1,6 @@
 # Neu in Workplace CLI 1.2
 
-- **Office-Dokumente erstellen** (`/document-builder`): Word, Excel, PowerPoint und PDF aus Inhalten/Daten — in neutralem Standarddesign, ohne API oder Internet.
+- **Office-Dokumente erstellen** (`/document-builder`): Word, Excel, PowerPoint und PDF aus Inhalten/Daten — in neutralem Standarddesign, ohne API oder Internet. (1.2.1: funktioniert jetzt zuverlässig — nutzt den mitgelieferten Python-Interpreter.)
 - **Screenshots & visuelle Prüfung** (`screenshot`): Der Agent rendert eine URL oder lokale HTML-Datei und *sieht* das Ergebnis (Vision) — praktisch zum Kontrollieren von Frontend-Arbeit. Chromium einmalig via `playwright install chromium`.
 - **Gedächtnis über Sessions** (`remember`): Der Agent kann sich dauerhafte Fakten merken (Vorlieben, Projekt-Konventionen) und erinnert sie in späteren Sessions.
 - **Dateien schnell finden** (`glob`): Suche nach Namensmuster wie `**/*.py`, ergänzend zur Inhaltssuche (`grep`).

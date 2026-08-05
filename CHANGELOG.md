@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.2.1] — 2026-08-05
+
+**Fix: `/document-builder` schlug in der echten CLI fehl**
+- Das `bash`-Tool ruft den Login-`python3` (z.B. Homebrew) auf, der die gebündelten Libs (`reportlab`, `python-docx` …) nicht kennt → `ModuleNotFoundError`, und `pip install` ist blockiert. Das Tool exponiert jetzt `$WORKPLACE_PYTHON` (den venv-Interpreter *mit* den Libs); der Skill schreibt dessen Nutzung vor und meidet die DejaVu-Font-Sackgasse (reportlabs Standardschrift kann Umlaute/€/„—" bereits). Dokumenterstellung funktioniert damit out of the box.
+
+**Intern: CI zieht jetzt Tests + Typen**
+- Die CI führt zusätzlich zur Lint/Build-Prüfung die volle pytest-Suite (~3.260 Tests) und pyright aus. UI-Snapshot-Tests laufen last-robust (geringe Parallelität + Reruns); der Model-Picker-Snapshot ist nicht mehr host-abhängig.
+
 ### [1.2.0] — 2026-08-05
 
 **Neues Tool `screenshot` — Seiten rendern und visuell prüfen**

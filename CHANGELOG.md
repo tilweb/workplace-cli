@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+**MCP-Server per CLI verwalten (`workplace mcp add/list/remove`)**
+- Neuer Befehl, um MCP-Server einzurichten, ohne die `config.toml` von Hand zu editieren: `workplace mcp add <name> --transport streamable-http --url … --api-key-env …` (HTTP/Cloud) oder `workplace mcp add <name> --transport stdio -- <cmd> …` (lokal). Schreibt einen validierten Eintrag (kein TOML-Array-Fallstrick), hält Tokens in Env-Variablen, plus `list` und `remove`. Bisher ging das nur per Datei-Editieren; `/mcp` im TUI zeigt Server nur an.
+
 ### [1.3.0] — 2026-08-05
 
 **`theme-factory`: Theme-Showcase-PDF wird mitgeliefert**

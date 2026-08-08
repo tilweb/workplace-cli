@@ -191,6 +191,15 @@ def warn_if_legacy_vibe_home() -> None:
 
 
 def main() -> None:
+    # Subcommands are dispatched before the main (prompt-positional) parser so
+    # that `workplace mcp ...` doesn't collide with `workplace "<prompt>"`.
+    argv = sys.argv[1:]
+    if argv and argv[0] == "mcp":
+        from vibe.cli.mcp_cli import run_mcp_cli
+
+        run_mcp_cli(argv[1:])
+        return
+
     args = parse_arguments()
 
     warn_if_legacy_vibe_home()

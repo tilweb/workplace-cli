@@ -614,7 +614,26 @@ Notes:
 
 ### MCP Server Configuration
 
-You can configure MCP (Model Context Protocol) servers to extend Vibe's capabilities. Add MCP server configurations under the `mcp_servers` section:
+The easiest way to add a server is the `workplace mcp` command — it writes a
+validated entry to `config.toml` for you (no hand-editing, no TOML pitfalls):
+
+```bash
+# Remote HTTP server (token stays in an env var, not in config.toml)
+workplace mcp add youtrack \
+  --transport streamable-http \
+  --url https://<instance>.youtrack.cloud/mcp \
+  --api-key-env YOUTRACK_TOKEN
+
+# Local stdio server (everything after -- is the command)
+workplace mcp add fetch --transport stdio -- uvx mcp-server-fetch
+
+workplace mcp list            # show configured servers
+workplace mcp remove fetch    # remove one
+```
+
+Restart Workplace CLI (or `/reload`) afterwards; verify with `/mcp`.
+
+Alternatively, edit the config directly — add MCP server configurations under the `mcp_servers` section:
 
 ```toml
 # Example MCP server configurations

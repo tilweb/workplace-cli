@@ -69,6 +69,7 @@ from vibe.cli.textual_ui.widgets.loading import (
     LoadingWidget,
     paused_timer,
 )
+from vibe.cli.textual_ui.widgets.mcp_add_app import McpAddApp
 from vibe.cli.textual_ui.widgets.mcp_app import MCPApp, MCPSourceKind
 from vibe.cli.textual_ui.widgets.messages import (
     AssistantMessage,
@@ -207,6 +208,7 @@ class BottomApp(StrEnum):
     ConnectorAuth = auto()
     Input = auto()
     MCP = auto()
+    McpAdd = auto()
     ModelPicker = auto()
     ProxySetup = auto()
     Question = auto()
@@ -862,6 +864,33 @@ class VibeApp(App):  # noqa: PLR0904
             self._refresh_banner()
         await self._switch_to_input_app()
         await self._show_mcp(cmd_args=message.connector_name)
+
+    async def on_mcp_add_app_mcp_add_closed(
+        self, message: McpAddApp.McpAddClosed
+    ) -> None:
+        if message.error:
+            await self._mount_and_scroll(
+                ErrorMessage(f"Failed to add MCP server: {message.error}")
+            )
+            await self._switch_to_input_app()
+            return
+        if message.saved:
+            # Reload so the new server's tools are available in this session.
+            await self._reload_config()
+            await self._mount_and_scroll(
+                UserCommandMessage(
+                    f"MCP server '{message.name}' added. Use /mcp to view its tools."
+                )
+            )
+        else:
+            await self._mount_and_scroll(UserCommandMessage("Add MCP server cancelled."))
+        await self._switch_to_input_app()
+
+    async def _switch_to_mcp_add_app(self) -> None:
+        if self._current_bottom_app == BottomApp.McpAdd:
+            return
+        await self._mount_and_scroll(UserCommandMessage("Add MCP server opened..."))
+        await self._switch_from_input(McpAddApp())
 
     async def on_proxy_setup_app_proxy_setup_closed(
         self, message: ProxySetupApp.ProxySetupClosed
@@ -1602,6 +1631,10 @@ class VibeApp(App):  # noqa: PLR0904
         return "Refreshed."
 
     async def _show_mcp(self, cmd_args: str = "", **kwargs: Any) -> None:
+        if cmd_args.strip().lower() == "add":
+            await self._switch_to_mcp_add_app()
+            return
+
         mcp_servers = self.config.mcp_servers
         connector_registry = (
             self.agent_loop.connector_registry if self._connectors_enabled else None
@@ -2346,6 +2379,8 @@ class VibeApp(App):  # noqa: PLR0904
                     self.query_one(SessionPickerApp).focus()
                 case BottomApp.MCP:
                     self.query_one(MCPApp).focus()
+                case BottomApp.McpAdd:
+                    self.query_one(McpAddApp).focus()
                 case BottomApp.ConnectorAuth:
                     self.query_one(ConnectorAuthApp).focus()
                 case BottomApp.Rewind:
@@ -2624,7 +2659,11 @@ class VibeApp(App):  # noqa: PLR0904
         self.run_worker(self._interrupt_agent_loop(), exclusive=False)
 
     def _handle_bottom_app_close_escape(
-        self, widget_type: type[MCPApp] | type[ProxySetupApp] | type[ConnectorAuthApp]
+        self,
+        widget_type: type[MCPApp]
+        | type[ProxySetupApp]
+        | type[ConnectorAuthApp]
+        | type[McpAddApp],
     ) -> None:
         try:
             self.query_one(widget_type).action_close()
@@ -2639,6 +2678,8 @@ class VibeApp(App):  # noqa: PLR0904
             self._handle_voice_app_escape()
         elif self._current_bottom_app == BottomApp.MCP:
             self._handle_bottom_app_close_escape(MCPApp)
+        elif self._current_bottom_app == BottomApp.McpAdd:
+            self._handle_bottom_app_close_escape(McpAddApp)
         elif self._current_bottom_app == BottomApp.ConnectorAuth:
             self._handle_bottom_app_close_escape(ConnectorAuthApp)
         elif self._current_bottom_app == BottomApp.ProxySetup:

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.4.0] — 2026-08-08
+
 **MCP-Server ohne Datei-Editieren einrichten**
 - **CLI:** `workplace mcp add <name> --transport streamable-http --url … --api-key-env …` (HTTP/Cloud) oder `… --transport stdio -- <cmd> …` (lokal), plus `list` und `remove`. Schreibt validierte Einträge (kein TOML-Array-Fallstrick), hält Tokens in Env-Variablen.
 - **TUI:** `/mcp add` öffnet ein Formular (Name, Transport, URL, API-Key-Env); nach dem Speichern lädt die Session neu, der Server ist sofort nutzbar.

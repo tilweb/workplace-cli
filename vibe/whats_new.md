@@ -1,4 +1,8 @@
-# Neu in Workplace CLI 1.3
+# Neu in Workplace CLI 1.4
+
+- **MCP-Server einfach einrichten**: Externe Tools (z.B. YouTrack, GitLab) anbinden ohne Datei-Editieren — per `workplace mcp add …` (plus `list`/`remove`) oder im TUI über `/mcp add`. Tokens bleiben in Env-Variablen.
+
+## Weiterhin aus 1.3
 
 - **Hintergrund-Prozesse** (`bash`): Langläufer wie Dev-Server, `tail -f` oder Watcher mit `run_in_background` starten, ohne die Session zu blockieren — Output per `bash_output` nachlesen, per `kill_bash` stoppen.
 - **Design-Skills mit visueller Kontrolle**: `/frontend-design` und `/canvas-design` rendern ihr Ergebnis jetzt per `screenshot` und *sehen* es an, statt Design nur aus dem Code zu beurteilen.

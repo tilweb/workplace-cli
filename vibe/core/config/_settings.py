@@ -446,6 +446,25 @@ DEFAULT_PROVIDERS = [
     ),
 ]
 
+# === ADACOR PATCH START: mitgelieferte Default-MCP-Server ===
+# YouTrack Cloud (offizieller Remote-MCP) ist out-of-the-box verfügbar, sobald
+# der Nutzer den Token in YOUTRACK_TOKEN setzt — ohne `workplace mcp add`. Der
+# Eintrag wird beim Laden virtuell injiziert (nicht in config.toml persistiert);
+# ein gleichnamiger Eintrag in der config.toml überschreibt den Default (auch
+# `disabled = true` als Opt-out). Kein Token im Code.
+DEFAULT_YOUTRACK_TOKEN_ENV = "YOUTRACK_TOKEN"
+DEFAULT_MCP_SERVERS: list[MCPServer] = [
+    MCPStreamableHttp(
+        name="youtrack",
+        transport="streamable-http",
+        url="https://adacor.youtrack.cloud/mcp",
+        api_key_env=DEFAULT_YOUTRACK_TOKEN_ENV,
+        api_key_header="Authorization",
+        api_key_format="Bearer {token}",
+    ),
+]
+# === ADACOR PATCH END ===
+
 # === ADACOR PATCH: bekannte vision-fähige Adacor-Modelle ===
 # Adacors /models-Endpoint meldet keine Vision-Fähigkeit, und discovered
 # Modelle bekommen `supports_vision` sonst nicht gesetzt. Diese Namen werden
@@ -1078,6 +1097,21 @@ class VibeConfig(BaseSettings):
                 DEFAULT_ACTIVE_MODEL,
             )
             instance.active_model = DEFAULT_ACTIVE_MODEL
+        # === ADACOR PATCH END ===
+
+        # === ADACOR PATCH START: Default-MCP-Server injizieren ===
+        # Mitgelieferte Server (z.B. YouTrack) virtuell hinzufügen, wenn der
+        # Nutzer sie nicht selbst konfiguriert hat und ihr Token gesetzt ist.
+        # Ohne Token nicht injizieren — sonst scheitert die MCP-Discovery beim
+        # Start und kostet unnötig Zeit.
+        configured_names = {s.name for s in instance.mcp_servers}
+        for default_server in DEFAULT_MCP_SERVERS:
+            token_env = getattr(default_server, "api_key_env", "")
+            if default_server.name in configured_names:
+                continue
+            if token_env and not os.getenv(token_env):
+                continue
+            instance.mcp_servers.append(default_server.model_copy())
         # === ADACOR PATCH END ===
         return instance
 

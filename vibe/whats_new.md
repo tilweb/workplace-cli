@@ -1,6 +1,7 @@
 # Neu in Workplace CLI 1.4
 
 - **MCP-Server einfach einrichten**: Externe Tools (z.B. YouTrack, GitLab) anbinden ohne Datei-Editieren — per `workplace mcp add …` (plus `list`/`remove`) oder im TUI über `/mcp add`. Tokens bleiben in Env-Variablen.
+- **YouTrack ist schon dabei**: Einfach `YOUTRACK_TOKEN` setzen — der YouTrack-Cloud-MCP steht dann out of the box bereit, ganz ohne Einrichtung.
 
 ## Weiterhin aus 1.3
 

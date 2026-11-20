@@ -633,6 +633,12 @@ workplace mcp remove fetch    # remove one
 
 Restart Workplace CLI (or `/reload`) afterwards; verify with `/mcp`.
 
+**YouTrack is bundled by default:** the official YouTrack Cloud MCP server
+(`adacor.youtrack.cloud`) is available automatically as soon as you set a
+`YOUTRACK_TOKEN` environment variable (e.g. in `~/.workplace-cli/.env`) — no
+`mcp add` needed. To point it elsewhere or disable it, add your own `youtrack`
+entry to `config.toml` (an entry with `disabled = true` opts out).
+
 Alternatively, edit the config directly — add MCP server configurations under the `mcp_servers` section:
 
 ```toml

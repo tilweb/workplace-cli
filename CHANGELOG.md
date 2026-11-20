@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+### [1.4.1] — 2026-11-20
+
 **YouTrack als mitgelieferter Default-MCP-Server**
 - Der offizielle YouTrack-Cloud-MCP (`adacor.youtrack.cloud`) ist jetzt out of the box dabei: sobald `YOUTRACK_TOKEN` in der Umgebung gesetzt ist, steht YouTrack ohne `mcp add` zur Verfügung. Ohne Token wird nichts injiziert (kein Startup-Penalty). Virtuell beim Laden ergänzt (nicht in `config.toml` geschrieben); ein gleichnamiger Eintrag in der `config.toml` überschreibt den Default (auch `disabled = true` als Opt-out). Kein Token im Code/Repo.
 
